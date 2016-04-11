@@ -1,16 +1,6 @@
 #!/bin/bash -x
 
 # Directories #
-OVS_DIR=/home/sugeshch/repo/ovs_dpdk/ovs_dpdk
-DPDK_DIR=/home/sugeshch/repo/dpdk_master
-QEMU_DIR=/home/sugeshch/repo/ovs_dpdk/qemu
-
-if [ "$#" -ne 1 ]; then
-	echo "invalid option, please provide all|ovs|qemu|dpdk|dpdk_ivshm|vanila|vanila_prefix|clean"
-	exit 0
-fi
-
-key="$1"
 
 function clean_repo {
     echo "Cleaning DPDK..."
@@ -76,7 +66,7 @@ function build_ovs_default {
 
 function build_ovs_gcc {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building OVS...."
+    echo "Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure CFLAGS="-g" --with-dpdk=$DPDK_DIR/$target/
@@ -90,7 +80,7 @@ function build_ovs_gcc {
 
 function build_ovs {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building OVS...."
+    echo "Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure --with-dpdk=$DPDK_DIR/$target/
@@ -114,37 +104,4 @@ function build_qemu {
 	make -j 20
 	echo "QEMU build completed...."
 }
-
-case $key in
-    dpdk)
-    build_dpdk
-    ;;
-	dpdk_ivshm)
-	build_dpdk_ivshm
-	;;
-	ovs)
-	build_ovs
-	;;
-	qemu)
-	build_qemu
-	;;
-	vanila)
-	build_vanila_ovs
-	;;
-	vanila_prefix)
-	build_vanila_ovs_prefix
-	;;
-	all)
-	build_dpdk
-	build_ovs
-	build_qemu
-	;;
-    clean)
-    clean_repo
-    ;;
-	*)
-	echo "invalid option, please provide all|ovs|qemu|dpdk|vanila|vanila_prefix ..."
-	exit 0
-	;;
-esac
 

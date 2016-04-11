@@ -1,5 +1,7 @@
 import os
 import subprocess
+import sys
+import collections
 try:
     from termcolor import colored
 except ImportError:
@@ -15,7 +17,8 @@ ENV_DICT = {
             "DPDK_PCI1" : "",
             "DPDK_PCI2" : "",
             "VHOST_NIC1" : "",
-            "VHOST_NIC2" : ""
+            "VHOST_NIC2" : "",
+            "KERNEL-NIC-DRV" : ""
             }
 ENV_FILE_NAME = ".ovs-dpdk-script-env"
 
@@ -35,9 +38,12 @@ BASH_SCRIPT_FNS = {
                    # build the OVS with /var and /usr prefix than /usr/local
                    "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs"],
                    "BUILD-DPDK-NATIVE": ["build_script.sh", "build_dpdk"],
-                   "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"]
-                   
+                   "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"],
+                   # Leave the script field empty when fn is local.
+                   "SET-ALL-ENV" : ["", "set_and_save_env"],
+                   "SET-ONE-ENV" : ["", "set_and_save_selected_env"]
                    }
+BASH_SCRIPT_FNS = collections.OrderedDict(BASH_SCRIPT_FNS)
 def print_color_string(s, color='white'):
     print("%s" %(colored(s, color, attrs = ['bold'])))
 
@@ -58,18 +64,14 @@ def run_bash_command(cmd, *args):
         print_color_string("Failed to run the bash command, " + e,
                            color = 'red')
 
-    res, err_res = out.communicate()
-    res = res.strip()
-    res = res.strip('\n')
-    err = out.returncode
-
-    if(err):
-        print("Failed to run the bash command %d\n%s" %(err, err_res))
-
-    return err, res, err_res
+    while True:
+        line = out.stdout.readline()
+        if not line:
+            break;
+        sys.stdout.write(line)
 
 def run_bash_command_with_list_args(cmd, args):
-    return(run_bash_command(cmd, *args))
+    run_bash_command(cmd, *args)
 
 def is_ovs_repo(dir_path):
     if not dir_path:
@@ -117,7 +119,7 @@ def read_and_display_env():
 
     env_fp = open(env_, 'r')
     for line in env_fp.readlines():
-        (key, value) = line.split(':')
+        (key, value) = line.split(':-')
 
         if not (key and value):
             print_color_string("Something went wrong in file, its corrupted",
@@ -129,8 +131,8 @@ def read_and_display_env():
                                color = 'red')
             continue
 
-        ENV_DICT[key] = value
-        print_color_string(key + " : " + value,
+        ENV_DICT[key] = value.strip('\n')
+        print_color_string(key + " :- " + value,
                            color='red')
     env_fp.close()
     return True
@@ -161,7 +163,7 @@ def set_and_save_selected_env():
         if key == key_in:
             data = raw_input("Enter new value to update %s: " %key_in)
             value = data
-        env_fp.write(str(key) + ":" + str(value) + "\n")
+        env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
     read_and_display_env()
@@ -180,7 +182,7 @@ def set_and_save_env():
         data = raw_input(key + "=" + value + ": ")
         if data:
             value = data
-        env_fp.write(str(key) + ":" + str(value) + "\n")
+        env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
 
@@ -189,7 +191,7 @@ def set_env_for_bash():
     for key, value in ENV_DICT.iteritems():
         os.environ[key] = value
 
-def run_bash_script(script_file):
+def run_bash_script_fn(script_file, fn):
     if not script_file:
         print_color_string("Invalid script " + script_file, color = "red")
         return
@@ -197,19 +199,35 @@ def run_bash_script(script_file):
     script_path = os.path.abspath(os.path.join(script_path, os.pardir)) + \
                                                 "/bash-scripts"
     script_file = script_path + "/" + script_file
-    err, res, err_res = run_bash_command("bash", "-c", ". " + script_file + "; " +
-                                         "go")
-    print res
-def compile_repo():
-    pass
+    set_env_for_bash()
+    run_bash_command("bash", "-c", ". " + script_file + "; " + fn)
+
+def list_and_run():
+    for i, (key, value) in enumerate(BASH_SCRIPT_FNS.iteritems()):
+        print_color_string(str(i) + " : " + key, color="cyan")
+    choice = (raw_input("Enter your choice[0-%d] : " %i))
+
+    if not choice:
+        print_color_string("Invalid Choice, Exiting...", color = "red")
+        return
+
+    choice = int(choice)
+    if not choice or choice < 0 or choice > i:
+        print_color_string("Invalid Choice, Exiting...", color = "red")
+        return
+
+    script_file = BASH_SCRIPT_FNS.values()[choice][0]
+    fn = BASH_SCRIPT_FNS.values()[choice][1]
+    if script_file:
+        run_bash_script_fn(script_file, fn)
+    else:
+        eval(fn)()
+
 def main():
-    
+
     if not is_ovs_repo(os.getcwd()):
         print_color_string("Not a valid repo", color = 'red')
         return False
-    #set_and_save_env()
-    #set_and_save_selected_env()
-    set_env_for_bash()
-    run_bash_script("test.sh")
+    list_and_run()
 
 main()
