@@ -1,15 +1,6 @@
 #!/bin/bash -x
 
-# Directories #
-#OVS_DIR=/home/sugeshch/repo/ovs_dpdk/ovs_dpdk
-DPDK_DIR=/home/sugeshch/repo/dpdk_master
-OVS_DIR=/home/sugeshch/repo/ovs_master
 echo $OVS_DIR $DPDK_DIR
-DPDK_PHY1=0000:05:00.0
-DPDK_PHY2=0000:05:00.1
-#KERNEL_DRV=i40e
-KERNEL_DRV=ixgbe
-
 
 # Variables #
 HUGE_DIR=/dev/hugepages
@@ -18,14 +9,14 @@ HUGE_DIR=/dev/hugepages
 function start_test {
 	sudo umount $HUGE_DIR
 	echo "Lets bind the ports to the kernel first"
-	sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=$KERNEL_DRV $DPDK_PHY1 $DPDK_PHY2
+	sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
     mkdir -p $HUGE_DIR
 	sudo mount -t hugetlbfs nodev $HUGE_DIR
 
 	sudo modprobe uio
 	sudo rmmod igb_uio.ko
-	sudo insmod $DPDK_DIR/x86_64-native-linuxapp-gcc/kmod/igb_uio.ko
-	sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=igb_uio $DPDK_PHY1 $DPDK_PHY2
+	sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
+	sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
 	sudo rm /usr/local/etc/openvswitch/conf.db
 	sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
@@ -58,22 +49,17 @@ function kill_switch {
 }
 
 function menu {
-	echo "Press [q] to exit the test, or any other key to relaunch the switch"
-	read next
-
-	if [ "$next" == "q" ]; then
-		echo "Exiting Test. Bye!"
-		kill_switch
-		exit 0
-	else
-		echo "Relaunching Switch.."
-		kill_switch
-		start_test
-	fi
+    while true;
+    do
+        echo "launching Switch.."
+	    kill_switch
+    	start_test
+        echo "Press [q] to exit the test, "
+        read next
+        if [ "$next" == "q" ]; then
+           echo "Exiting Test. Bye!"
+           kill_switch
+           exit 0
+        fi
+    done
 }
-
-# main
-while true;
-do
-	menu
-done

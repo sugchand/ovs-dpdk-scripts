@@ -18,7 +18,8 @@ ENV_DICT = {
             "DPDK_PCI2" : "",
             "VHOST_NIC1" : "",
             "VHOST_NIC2" : "",
-            "KERNEL-NIC-DRV" : ""
+            "KERNEL_NIC_DRV" : "",
+            "DPDK_TARGET" : ""
             }
 ENV_FILE_NAME = ".ovs-dpdk-script-env"
 
@@ -29,6 +30,7 @@ An eg: to build DPDK ivshmem is looks like
 BUILD_DPDK_IVSHM : [build_script.sh, build_dpdk_ivshm]
 """
 BASH_SCRIPT_FNS = {
+                   "PHY-PHY": ["phy2phy_manual.sh", "menu"],
                    #Just build with existing config settings
                    "BUILD-OVS-DEFAULT": ["build_script.sh", "build_ovs_default"],
                    "BUILD-OVS-GCC-DPDK-NATIVE": ["build_script.sh", "build_ovs_gcc"],
@@ -162,7 +164,7 @@ def set_and_save_selected_env():
         value = value.rstrip('\n')
         if key == key_in:
             data = raw_input("Enter new value to update %s: " %key_in)
-            value = data
+            value = data.strip()
         env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
@@ -181,7 +183,7 @@ def set_and_save_env():
         value = value.rstrip('\n')
         data = raw_input(key + "=" + value + ": ")
         if data:
-            value = data
+            value = data.strip()
         env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
@@ -207,12 +209,12 @@ def list_and_run():
         print_color_string(str(i) + " : " + key, color="cyan")
     choice = (raw_input("Enter your choice[0-%d] : " %i))
 
-    if not choice:
+    if choice == "":
         print_color_string("Invalid Choice, Exiting...", color = "red")
         return
 
     choice = int(choice)
-    if not choice or choice < 0 or choice > i:
+    if choice < 0 or choice > i:
         print_color_string("Invalid Choice, Exiting...", color = "red")
         return
 
