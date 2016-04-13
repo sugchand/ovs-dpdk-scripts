@@ -12,6 +12,7 @@ ENV_DICT = {
             "OVS_DIR" : "",
             "DPDK_DIR" : "",
             "QEMU_DIR" : "",
+            "VM_IMAGE" : "",
             "DPDK_NIC1" : "",
             "DPDK_NIC2" : "",
             "DPDK_PCI1" : "",
@@ -33,6 +34,7 @@ BASH_SCRIPT_FNS = {
                    "CLEAN-TEST": ["clean_test.sh", "clean"],
                    "PHY-PHY": ["phy2phy_manual.sh", "menu"],
                    "PHY-VXLAN-PHY": ["phy2phy_vxlan-bidir.sh", "menu"],
+                   "PHY-VM-PHY": ["phy2vm_manual.sh", "menu"],
                    #Just build with existing config settings
                    "BUILD-OVS": ["build_script.sh", "build_ovs_default"],
                    "BUILD-OVS-GCC-DPDK-NATIVE": ["build_script.sh", "build_ovs_gcc"],
@@ -128,9 +130,12 @@ def read_and_display_env():
             continue
 
         ENV_DICT[key] = value.strip('\n')
-        print_color_string(key + " :- " + value,
-                           color='red')
     env_fp.close()
+
+    for key, value in ENV_DICT.iteritems():
+        print_color_string(key + " :- " + value + "\n",
+                           color='red')
+
     return True
 
 def set_and_save_selected_env():

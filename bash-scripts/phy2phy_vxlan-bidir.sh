@@ -14,7 +14,7 @@ function start_test {
     sudo mount -t hugetlbfs nodev $HUGE_DIR
 
     sudo modprobe uio
-    sudo insmod $DPDK_DIR/x86_64-ivshmem-linuxapp-gcc/kmod/igb_uio.ko
+    sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
     sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
     sudo rm /usr/local/etc/openvswitch/conf.db
