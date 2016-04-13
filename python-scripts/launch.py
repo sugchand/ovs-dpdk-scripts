@@ -30,9 +30,11 @@ An eg: to build DPDK ivshmem is looks like
 BUILD_DPDK_IVSHM : [build_script.sh, build_dpdk_ivshm]
 """
 BASH_SCRIPT_FNS = {
+                   "CLEAN-TEST": ["clean_test.sh", "clean"],
                    "PHY-PHY": ["phy2phy_manual.sh", "menu"],
+                   "PHY-VXLAN-PHY": ["phy2phy_vxlan-bidir.sh", "menu"],
                    #Just build with existing config settings
-                   "BUILD-OVS-DEFAULT": ["build_script.sh", "build_ovs_default"],
+                   "BUILD-OVS": ["build_script.sh", "build_ovs_default"],
                    "BUILD-OVS-GCC-DPDK-NATIVE": ["build_script.sh", "build_ovs_gcc"],
                    "BUILD-OVS-DPDK-NATIVE": ["build_script.sh", "build_ovs"],
                    "BUILD-OVS-DPDK-IVSHM": ["build_script.sh", "build_ovs_ivshm"],
@@ -45,7 +47,6 @@ BASH_SCRIPT_FNS = {
                    "SET-ALL-ENV" : ["", "set_and_save_env"],
                    "SET-ONE-ENV" : ["", "set_and_save_selected_env"]
                    }
-BASH_SCRIPT_FNS = collections.OrderedDict(BASH_SCRIPT_FNS)
 def print_color_string(s, color='white'):
     print("%s" %(colored(s, color, attrs = ['bold'])))
 
@@ -60,17 +61,10 @@ def run_bash_command(cmd, *args):
     print exec_cmd
 
     try:
-        out = subprocess.Popen(exec_cmd, stdout = subprocess.PIPE, stderr = 
-                               subprocess.PIPE)
+        out = subprocess.Popen(exec_cmd)
     except Exception as e:
         print_color_string("Failed to run the bash command, " + e,
                            color = 'red')
-
-    while True:
-        line = out.stdout.readline()
-        if not line:
-            break;
-        sys.stdout.write(line)
 
 def run_bash_command_with_list_args(cmd, args):
     run_bash_command(cmd, *args)

@@ -43,23 +43,19 @@ function start_test {
 function kill_switch {
 	echo "Killing the switch.."
 	sudo $OVS_DIR/utilities/ovs-appctl -t ovs-vswitchd exit
-	sudo $OVS_DIR/utilities/ovs-appctl -t ovsdb-server exit 
+	sudo $OVS_DIR/utilities/ovs-appctl -t ovsdb-server exit
 	sleep 1
+    sudo pkill -9 ovs-vswitchd
+    sudo pkill -9 ovsdb-server
 	sudo umount $HUGE_DIR
+    sudo pkill -9 qemu-system-x86_64*
+    sudo rm -rf /usr/local/var/run/openvswitch/*
+    sudo rm -rf /usr/local/var/log/openvswitch/*
+    sudo pkill -9 pmd*
 }
 
 function menu {
-    while true;
-    do
         echo "launching Switch.."
 	    kill_switch
     	start_test
-        echo "Press [q] to exit the test, "
-        read next
-        if [ "$next" == "q" ]; then
-           echo "Exiting Test. Bye!"
-           kill_switch
-           exit 0
-        fi
-    done
 }
