@@ -149,7 +149,8 @@ def set_and_save_selected_env():
     env_ = env_ + "/" + ENV_FILE_NAME
 
     while(1):
-        key_in = raw_input("Enter the env variable to update, One at a time: ")
+        key_in = raw_input("Enter the env variable to update, One at a time"
+                           " (Press Enter to exit): ")
         if not key_in:
             return
 
@@ -180,7 +181,8 @@ def set_and_save_env():
     env_ = env_ + "/" + ENV_FILE_NAME
     env_fp = open(env_, 'w')
 
-    print_color_string("Press Enter to keep the value... ", color='green')
+    print_color_string("Press Enter to keep the value unchanged ",
+                       color='green')
     
     for key, value in ENV_DICT.iteritems():
         value = value.rstrip('\n')
