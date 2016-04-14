@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 import subprocess
 import sys
@@ -132,10 +133,13 @@ def read_and_display_env():
         ENV_DICT[key] = value.strip('\n')
     env_fp.close()
 
+    env_fp = open(env_, 'w')
     for key, value in ENV_DICT.iteritems():
         print_color_string(key + " :- " + value + "\n",
                            color='red')
+        env_fp.write(str(key) + ":-" + str(value) + "\n")
 
+    env_fp.close()
     return True
 
 def set_and_save_selected_env():
