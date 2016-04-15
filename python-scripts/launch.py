@@ -46,6 +46,7 @@ BASH_SCRIPT_FNS = {
                    "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs"],
                    "BUILD-DPDK-NATIVE": ["build_script.sh", "build_dpdk"],
                    "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"],
+                   "BUILD-OVS-CHECK": ["build_script.sh", "build_check"],
                    # Leave the script field empty when fn is local.
                    "SET-ALL-ENV" : ["", "set_and_save_env"],
                    "SET-ONE-ENV" : ["", "set_and_save_selected_env"]

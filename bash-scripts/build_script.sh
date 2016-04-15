@@ -63,7 +63,7 @@ function build_vanila_ovs_prefix {
 function build_ovs_default {
     cd $OVS_DIR
     make -j 20 CFLAGS="-Ofast -march=native"
-    ret= $?
+    ret=$?
     echo "OVS build completed...."
     return $ret
 }
@@ -134,7 +134,20 @@ function build_qemu {
 function build_check {
     #Build for Linux and DPDK platform, run all the UT, store the reports
     TEST_RESULTS="/tmp/ovs-test.log"
-    echo "Now building OVS with linux"
+    rm -rf $TEST_RESULTS
+    echo "The test report logs stored at $TEST_RESULTS"
+    echo "*****Building OVS with Clang*****"
+    cd $OVS_DIR && \
+    ./boot.sh && \
+    ./configure CC=clang
+    if [ $? -ne 0 ]; then
+        echo "Cannot compile, configure failed.."
+        return 1
+    fi
+    make -j 20 2>&1 | tail -10 >> $TEST_RESULTS
+    echo "****OVS-CLANG build completed****" >> $TEST_RESULTS 2>&1
+
+    echo "***Now building OVS with linux***"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure --with-linux=/lib/modules/`uname -r`/build
@@ -142,10 +155,24 @@ function build_check {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 >> $TEST_RESULTS 2>&1
-    echo "Vanila OVS build completed"
+    make -j 20 2>&1 | tail -10 >> $TEST_RESULTS
+    echo "***Vanila OVS build completed***" >> $TEST_RESULTS 2>&1
 
-    echo "Now running UT on OVS+Linux......" >> $TEST_RESULTS 2>&1
-    make check TESTSUITEFLAGS=-j20 >> $TEST_RESULTS 2>&1
+    echo "***Now running UT on OVS+Linux......***" >> $TEST_RESULTS 2>&1
+    make check TESTSUITEFLAGS=-j20 2>&1 | tail -30 >> $TEST_RESULTS
 
+    echo "***Now Building OVS using $DPDK_DIR/$DPDK_TARGET/***" \
+                                    >> $TEST_RESULTS 2>&1
+    cd $OVS_DIR && \
+    ./boot.sh && \
+    ./configure --with-dpdk=$DPDK_DIR/$DPDK_TARGET/
+    if [ $? -ne 0 ]; then
+        echo "Cannot compile, configure failed.."
+        return 1
+    fi
+    make -j 20 CFLAGS="-Ofast -march=native" 2>&1 | tail -10 >> $TEST_RESULTS
+    echo "***OVS-DPDK build completed....***" >> $TEST_RESULTS 2>&1
+
+    echo "***Now running UT on OVS+DPDK......***" >> $TEST_RESULTS 2>&1
+    make check TESTSUITEFLAGS=-j20 2>&1 | tail -30 >> $TEST_RESULTS
 }
