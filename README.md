@@ -18,8 +18,8 @@ running in a specific given environment.
 1. Run the script 'python-scripts/launch.py' from the OVS repo. The script
 doesnt work when it is called from places other than OVS repo. The launcher
 stores all the environment variable information in a file '.ovs-dpdk-script-env'
-created in OVS repo file. Each OVS repo has its own '.ovs-dpdk-script-env' file
-to hold its environment settings.
+created in OVS repo directory. Each OVS repo has its own '.ovs-dpdk-script-env'
+file to hold its environment settings.
 2. Select the option to "SET-ALL-ENV" to set the environment for the OVS repo.
 This is a one time activity for the repo to set all the environment settings.
 Its possible to modify the values later by using the options "SET-ALL-ENV" or
@@ -32,7 +32,7 @@ cases. Modify "ENV_DICT" in launch.py for the specific requirement.
 the framework without much additional overhead. User can modify
 "BASH_SCRIPT_FNS" in launch.py to accommodate custom operations. Each entry in
 "BASH_SCRIPT_FNS" has specific functionality. The function can be
-either a bash or a python specific function.
+either a bash or a python specific.
 
 ### Bash Scripts
 These scripts are self sustained scripts that meant to do some specific task,
