@@ -14,6 +14,15 @@ running in a specific given environment.
 4. Can be used to run prerequisite tests and compilations before commits.
 5. Readily available sample OVS+DPDK test cases and build scripts for OVS, DPDK.
 
+### Prerequisite
+* Python 2.7 or higher
+* Python termcolor module. This can be installed by "pip install termcolor".
+* User account must be in sudoers list.
+* The sudo password must be remembered by the system when running any function.
+The scripts cannot take user inputs while running so is password. The sudo
+password timeout can be set to indefinite by running "sudo visudo" and add the line "Defaults    timestamp_timeout=-1". This will avoid the need of user password
+to run the scripts.
+
 ### How to use it
 1. Run the script 'python-scripts/launch.py' from the OVS repo. The script
 doesnt work when it is called from places other than OVS repo. The launcher
