@@ -8,6 +8,16 @@ function clean_repo {
     make uninstall
     cd $OVS_DIR && \
     make clean
+    echo "Note:::Uninstalling standard ovs installations too.."
+    sudo dpkg -P openvswitch-pki
+    sudo dpkg -P openvswitch-ipsec
+    sudo dpkg -P openvswitch-switch
+    sudo dpkg -P python-openvswitch
+    sudo dpkg -P openvswitch-datapath-dkms
+    sudo dpkg -P openvswitch-vtep
+    sudo dpkg -P openvswitch-dbg
+    sudo apt-get remove --auto-remove openvswitch-common
+    sudo apt-get purge --auto-remove openvswitch-common
 }
 
 function build_dpdk {
@@ -48,8 +58,8 @@ function build_vanila_ovs_prefix {
     echo "Now building Vanila OVS with prefix /usr and /var"
     cd $OVS_DIR && \
     ./boot.sh && \
-    ./configure --prefix=/usr --localstatedir=/var \
-    --with-linux=/lib/modules/`uname -r`/build && \
+    ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc\
+    --with-linux=/lib/modules/`uname -r`/build
     if [ $? -ne 0 ]; then
         echo "Cannot compile, configure failed.."
         return 1

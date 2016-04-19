@@ -43,10 +43,11 @@ BASH_SCRIPT_FNS = {
                    "BUILD-OVS-DPDK-IVSHM": ["build_script.sh", "build_ovs_ivshm"],
                    "BUILD-VANILA-OVS": ["build_script.sh", "build_vanila_ovs"],
                    # build the OVS with /var and /usr prefix than /usr/local
-                   "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs"],
+                   "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs_prefix"],
                    "BUILD-DPDK-NATIVE": ["build_script.sh", "build_dpdk"],
                    "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"],
                    "BUILD-OVS-CHECK": ["build_script.sh", "build_check"],
+                   "OVS-PURGE-CLEAN": ["build_script.sh", "clean_repo"],
                    # Leave the script field empty when fn is local.
                    "SET-ALL-ENV" : ["", "set_and_save_env"],
                    "SET-ONE-ENV" : ["", "set_and_save_selected_env"]
