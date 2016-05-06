@@ -50,7 +50,8 @@ BASH_SCRIPT_FNS = {
                    "OVS-PURGE-CLEAN": ["build_script.sh", "clean_repo"],
                    # Leave the script field empty when fn is local.
                    "SET-ALL-ENV" : ["", "set_and_save_env"],
-                   "SET-ONE-ENV" : ["", "set_and_save_selected_env"]
+                   "SET-ONE-ENV" : ["", "set_and_save_selected_env"],
+                   "START-SHELL" : ["", "start_bash_shell"]
                    }
 def print_color_string(s, color='white'):
     print("%s" %(colored(s, color, attrs = ['bold'])))
@@ -70,6 +71,7 @@ def run_bash_command(cmd, *args):
     except Exception as e:
         print_color_string("Failed to run the bash command, " + e,
                            color = 'red')
+    out.wait()
 
 def run_bash_command_with_list_args(cmd, args):
     run_bash_command(cmd, *args)
@@ -138,7 +140,7 @@ def read_and_display_env():
     env_fp = open(env_, 'w')
     for key, value in ENV_DICT.iteritems():
         print_color_string(key + " :- " + value + "\n",
-                           color='red')
+                           color='green')
         env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
@@ -165,7 +167,7 @@ def set_and_save_selected_env():
         break
 
     env_fp = open(env_, 'w')
-    
+
     for key, value in ENV_DICT.iteritems():
         value = value.rstrip('\n')
         if key == key_in:
@@ -185,7 +187,7 @@ def set_and_save_env():
 
     print_color_string("Press Enter to keep the value unchanged ",
                        color='green')
-    
+
     for key, value in ENV_DICT.iteritems():
         value = value.rstrip('\n')
         data = raw_input(key + "=" + value + ": ")
@@ -199,6 +201,17 @@ def set_env_for_bash():
     read_and_display_env()
     for key, value in ENV_DICT.iteritems():
         os.environ[key] = value
+
+def start_bash_shell():
+    read_and_display_env()
+    for key, value in ENV_DICT.iteritems():
+        os.environ[key] = value
+    print_color_string("Opening a new subshell.......\n", color='blue')
+    print_color_string("****************************************************\n"
+                       "*****NOTE :: DO EXIT THE SUBSHELL AFTER THE USE*****\n"
+                       "****************************************************\n",
+                       color="red")
+    os.system("/bin/bash")
 
 def run_bash_script_fn(script_file, fn):
     if not script_file:
