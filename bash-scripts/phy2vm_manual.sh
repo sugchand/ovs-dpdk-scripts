@@ -27,14 +27,15 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
 
-    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file --detach
+    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
 # sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --dpdk -vhost_sock_dir /tmp -c 0x2 -n 4 --socket-mem=2048,0 -- --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
     sleep 20
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set Bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set Open_vSwitch . other_config:pmd-cpu-mask=10
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 dpdk0 -- set Interface dpdk0 type=dpdk
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 dpdk1 -- set Interface dpdk1 type=dpdk
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC1 -- set Interface $VHOST_NIC1 type=dpdkvhostuser

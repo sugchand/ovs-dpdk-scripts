@@ -21,7 +21,8 @@ ENV_DICT = {
             "VHOST_NIC1" : "",
             "VHOST_NIC2" : "",
             "KERNEL_NIC_DRV" : "",
-            "DPDK_TARGET" : ""
+            "DPDK_TARGET" : "",
+            "PMD_CPU_MASK" : ""
             }
 ENV_FILE_NAME = ".ovs-dpdk-script-env"
 
