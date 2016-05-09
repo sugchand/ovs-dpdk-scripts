@@ -33,11 +33,11 @@ BUILD_DPDK_IVSHM : [build_script.sh, build_dpdk_ivshm]
 """
 BASH_SCRIPT_FNS = {
                    "CLEAN-TEST": ["clean_test.sh", "clean"],
-                   "PHY-PHY": ["phy2phy_manual.sh", "menu"],
-                   "PHY-VXLAN-PHY": ["phy2phy_vxlan-bidir.sh", "menu"],
-                   "PHY-VM-PHY": ["phy2vm_manual.sh", "menu"],
+                   "PHY-PHY-TEST": ["phy2phy_manual.sh", "menu"],
+                   "PHY-VXLAN-PHY-TEST": ["phy2phy_vxlan-bidir.sh", "menu"],
+                   "PHY-VM-PHY-TEST": ["phy2vm_manual.sh", "menu"],
                    #Just build with existing config settings
-                   "BUILD-OVS": ["build_script.sh", "build_ovs_default"],
+                   "BUILD-OVS-NO-CLEAN": ["build_script.sh", "build_ovs_default"],
                    "BUILD-OVS-GCC-DPDK-NATIVE": ["build_script.sh", "build_ovs_gcc"],
                    "BUILD-OVS-DPDK-NATIVE": ["build_script.sh", "build_ovs"],
                    "BUILD-OVS-DPDK-IVSHM": ["build_script.sh", "build_ovs_ivshm"],
@@ -46,11 +46,11 @@ BASH_SCRIPT_FNS = {
                    "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs_prefix"],
                    "BUILD-DPDK-NATIVE": ["build_script.sh", "build_dpdk"],
                    "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"],
-                   "BUILD-OVS-CHECK": ["build_script.sh", "build_check"],
+                   "OVS-SANITY-UT": ["build_script.sh", "build_check"],
                    "OVS-PURGE-CLEAN": ["build_script.sh", "clean_repo"],
                    # Leave the script field empty when fn is local.
-                   "SET-ALL-ENV" : ["", "set_and_save_env"],
-                   "SET-ONE-ENV" : ["", "set_and_save_selected_env"],
+                   "DEFINE-ALL-ENV" : ["", "set_and_save_env"],
+                   "DEFINE-ONE-ENV" : ["", "set_and_save_selected_env"],
                    "START-SHELL" : ["", "start_bash_shell"]
                    }
 def print_color_string(s, color='white'):
