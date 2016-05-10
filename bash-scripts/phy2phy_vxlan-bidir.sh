@@ -21,8 +21,13 @@ function start_test {
     sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
 
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
-    sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile &
-    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --dpdk -c 0x2 -n 4 --socket-mem=1024,0 -- --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
+    sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
+
+    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
     sleep 22
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set Bridge br0 datapath_type=netdev
@@ -65,7 +70,7 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br-phy idle_timeout=0,in_port=LOCAL,action=output:1
 
 
-    sudo $OVS_DIR/utilities/ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=10
+    sudo $OVS_DIR/utilities/ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
     sudo $OVS_DIR/utilities/ovs-ofctl dump-flows br0
     sudo $OVS_DIR/utilities/ovs-ofctl dump-ports br0
 #    sudo $OVS_DIR/utilities/ovs-ofctl dump-flows br-phy
