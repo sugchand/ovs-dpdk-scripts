@@ -12,7 +12,8 @@ settings.
 3. Its easy to hook any test/build script with the framework and make it
 running in a specific given environment.
 4. Can be used to run prerequisite tests and compilations before commits.
-5. Readily available sample OVS+DPDK test cases and build scripts for OVS, DPDK.
+5. Readily available with sample OVS+DPDK test cases and build scripts for OVS,
+DPDK.
 
 ### Prerequisite
 * Python 2.7 or higher
@@ -20,8 +21,9 @@ running in a specific given environment.
 * User account must be in sudoers list.
 * The sudo password must be remembered by the system when running any function.
 The scripts cannot take user inputs while running so is password. The sudo
-password timeout can be set to indefinite by running "sudo visudo" and add the line "Defaults    timestamp_timeout=-1". This will avoid the need of user password
-to run the scripts.
+password timeout can be set to indefinite by running "sudo visudo" and add the
+line "Defaults    timestamp_timeout=-1". This will avoid the need of user
+password to run the scripts.
 
 ### How to use it
 1. Run the script 'python-scripts/launch.py' from the OVS repo. The script
@@ -34,14 +36,14 @@ This is a one time activity for the repo to set all the environment settings.
 Its possible to modify the values later by using the options "SET-ALL-ENV" or
 "SET-ONE-ENV".
 3. once the environment is set, user can use all the remaining available options
-to do various building and test operations.
+to do various compiling and test operations.
 4. Its possible to add/delete environment variables to use for different use
 cases. Modify "ENV_DICT" in launch.py for the specific requirement.
 5. The bash script functions can be added/deleted for the user requirement in
 the framework without much additional overhead. User can modify
 "BASH_SCRIPT_FNS" in launch.py to accommodate custom operations. Each entry in
-"BASH_SCRIPT_FNS" has specific functionality. The function can be
-either a bash or a python specific.
+"BASH_SCRIPT_FNS" has specific functionality. The function can be written
+either in bash or a python.
 
 ### Bash Scripts
 These scripts are self sustained scripts that meant to do some specific task,
