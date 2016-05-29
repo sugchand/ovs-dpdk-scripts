@@ -78,7 +78,7 @@ function build_ovs_default {
     return $ret
 }
 
-function build_ovs_gcc {
+function build_ovs_gdb {
     target="x86_64-native-linuxapp-gcc"
     echo "Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
@@ -88,7 +88,7 @@ function build_ovs_gcc {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 CFLAGS="-Ofast -march=native"
+    make -j 20 CFLAGS="-g -march=native"
     ret=$?
     echo "OVS build completed...."
     return $ret

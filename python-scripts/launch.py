@@ -39,7 +39,7 @@ BASH_SCRIPT_FNS = {
                    "PHY-VM-PHY-TEST": ["phy2vm_manual.sh", "menu"],
                    #Just build with existing config settings
                    "BUILD-OVS-NO-CLEAN": ["build_script.sh", "build_ovs_default"],
-                   "BUILD-OVS-GCC-DPDK-NATIVE": ["build_script.sh", "build_ovs_gcc"],
+                   "BUILD-OVS-GDB-DPDK-NATIVE": ["build_script.sh", "build_ovs_gdb"],
                    "BUILD-OVS-DPDK-NATIVE": ["build_script.sh", "build_ovs"],
                    "BUILD-OVS-DPDK-IVSHM": ["build_script.sh", "build_ovs_ivshm"],
                    "BUILD-VANILA-OVS": ["build_script.sh", "build_vanila_ovs"],
