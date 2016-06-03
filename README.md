@@ -58,3 +58,8 @@ time. So all scripts must be self sustained to make use of this framework.
 The script 'launch.py' is a invoker for all the other scripts. Directly running
 the bash scripts may fail because environment for running the scripts are
 prepared by launch.py.
+To run the provided bash scripts directly, Run it on the subshell created by
+launch.py.
+
+**Please contact me if you are facing any issues while using the test
+infrastructure.**
