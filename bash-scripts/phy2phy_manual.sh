@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. ${SRC_DIR}/banner.sh
 echo $OVS_DIR $DPDK_DIR
 
 # Variables #
@@ -7,6 +9,9 @@ HUGE_DIR=/dev/hugepages
 
 
 function start_test {
+
+	print_phy2phy_banner
+
 	sudo umount $HUGE_DIR
 	echo "Lets bind the ports to the kernel first"
 	sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
