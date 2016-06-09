@@ -1,7 +1,12 @@
 #!/bin/bash -x
 
 if [ -z "$DPDK_DIR" ]; then
-    echo "The DPDK directory not set, exiting.."
+    echo "The DPDK directory not set(DPDK_DIR), exiting.."
+    exit 1
+fi
+
+if [ -z "$DPDK_TARGET" ]; then
+    echo "The DPDK Terget directory not set(DPDK_TARGET), exiting.."
     exit 1
 fi
 
