@@ -1,6 +1,9 @@
 #!/bin/bash -x
 
 # Variables #
+SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. ${SRC_DIR}/banner.sh
+
 SOCK_DIR=/usr/local/var/run/openvswitch
 HUGE_DIR=/dev/hugepages
 MEM=4096M
@@ -19,6 +22,7 @@ function start_test {
     sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
     sudo $DPDK_DIR/tools/dpdk_nic_bind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
+    print_PVP_banner
     sudo rm /usr/local/etc/openvswitch/conf.db
     sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
 
