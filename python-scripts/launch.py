@@ -36,6 +36,7 @@ BASH_SCRIPT_FNS = {
                    "CLEAN-TEST": ["clean_test.sh", "clean"],
                    "PHY-PHY-TEST": ["phy2phy_manual.sh", "menu"],
                    "PHY-VXLAN-PHY-TEST": ["phy2phy_vxlan-bidir.sh", "menu"],
+                   "PHY-VXLAN-PHY-noENCAP-TEST": ["phy2phy_vxlan-bidir-no-encap-traffic.sh", "menu"],
                    "PHY-VM-PHY-TEST": ["phy2vm_manual.sh", "menu"],
                    #Just build with existing config settings
                    "BUILD-OVS-NO-CLEAN": ["build_script.sh", "build_ovs_default"],
