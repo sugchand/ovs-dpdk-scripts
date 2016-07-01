@@ -88,7 +88,7 @@ function build_ovs_gdb {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 CFLAGS="-g -march=native"
+    make -j 20 CFLAGS="-g -march=native -Q"
     ret=$?
     echo "OVS build completed...."
     return $ret
