@@ -205,15 +205,17 @@ def set_env_for_bash():
         os.environ[key] = value
 
 def start_bash_shell():
-    read_and_display_env()
-    for key, value in ENV_DICT.iteritems():
-        os.environ[key] = value
+    set_env_for_bash()
     print_color_string("Opening a new subshell.......\n", color='blue')
     print_color_string("****************************************************\n"
                        "*****NOTE :: DO EXIT THE SUBSHELL AFTER THE USE*****\n"
                        "****************************************************\n",
                        color="red")
-    os.system("/bin/bash")
+    rc_path = os.path.dirname(os.path.realpath(__file__))
+    rc_path = os.path.abspath(os.path.join(rc_path, os.pardir)) + \
+                                                "/bash-scripts"
+    rc_file = rc_path + "/rc_file"
+    os.system("/bin/bash --rcfile " + rc_file)
 
 def run_bash_script_fn(script_file, fn):
     if not script_file:
