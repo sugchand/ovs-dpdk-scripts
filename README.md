@@ -20,30 +20,32 @@ DPDK.
 * Python termcolor module. This can be installed by "pip install termcolor".
 * User account must be in sudoers list.
 * The sudo password must be remembered by the system when running any function.
-The scripts cannot take user inputs while running so is password. The sudo
-password timeout can be set to indefinite by running "sudo visudo" and add the
-line "Defaults    timestamp_timeout=-1". This will avoid the need of user
-password to run the scripts.
+So that the script doesnt need to prompt password to users when executing. The
+sudo password timeout can be set to indefinite by running "sudo visudo" and add the
+line "Defaults    timestamp_timeout=-1".
 
 ### How to use it
-1. Run the script 'python-scripts/launch.py' from the OVS repo. The script
+* Run the script 'python-scripts/launch.py' from the OVS repo. The script
 doesnt work when it is called from places other than OVS repo. The launcher
 stores all the environment variable information in a file '.ovs-dpdk-script-env'
-created in OVS repo directory. Each OVS repo has its own '.ovs-dpdk-script-env'
+in OVS repo directory. Each OVS repo has its own '.ovs-dpdk-script-env'
 file to hold its environment settings.
-2. Select the option to "SET-ALL-ENV" to set the environment for the OVS repo.
-This is a one time activity for the repo to set all the environment settings.
-Its possible to modify the values later by using the options "SET-ALL-ENV" or
-"SET-ONE-ENV".
-3. once the environment is set, user can use all the remaining available options
+* Select the option to "SET-ALL-ENV" to set the environment for the OVS repo.
+This is a one time activity for the repo to set all the environment variables.
+Its possible to modify these values in future by using the options "SET-ALL-ENV"
+or "SET-ONE-ENV".
+* once the environment is set, user can use all the remaining available options
 to do various compiling and test operations.
-4. Its possible to add/delete environment variables to use for different use
-cases. Modify "ENV_DICT" in launch.py for the specific requirement.
-5. The bash script functions can be added/deleted for the user requirement in
-the framework without much additional overhead. User can modify
+* Its possible to add/delete environment variables to support different use
+cases. Modify "ENV_DICT" in launch.py accordingly.
+* The bash script functions can also be added/deleted for the user requirement in
+the framework without much additional overhead. Modify the
 "BASH_SCRIPT_FNS" in launch.py to accommodate custom operations. Each entry in
 "BASH_SCRIPT_FNS" has specific functionality. The function can be written
 either in bash or a python.
+* The 'START-SUBSHELL' option enable users a start a new bash shell for
+executing the debug commands. The subshell has all the environment variables set
+to run any commands.
 
 ### Bash Scripts
 These scripts are self sustained scripts that meant to do some specific task,

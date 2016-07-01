@@ -50,10 +50,10 @@ BASH_SCRIPT_FNS = {
                    "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"],
                    "OVS-SANITY-UT": ["build_script.sh", "build_check"],
                    "OVS-PURGE-CLEAN": ["build_script.sh", "clean_repo"],
-                   # Leave the script field empty when fn is local.
+                   # Leave the script field empty when fn is python local.
                    "DEFINE-ALL-ENV" : ["", "set_and_save_env"],
                    "DEFINE-ONE-ENV" : ["", "set_and_save_selected_env"],
-                   "START-SHELL" : ["", "start_bash_shell"]
+                   "START-SUBSHELL" : ["", "start_bash_shell"]
                    }
 def print_color_string(s, color='white'):
     print("%s" %(colored(s, color, attrs = ['bold'])))
