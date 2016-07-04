@@ -20,16 +20,17 @@ DPDK.
 * Python termcolor module. This can be installed by "pip install termcolor".
 * User account must be in sudoers list.
 * The sudo password must be remembered by the system when running any function.
-So that the script doesnt need to prompt password to users when executing. The
-sudo password timeout can be set to indefinite by running "sudo visudo" and add the
-line "Defaults    timestamp_timeout=-1".
+So that the script doesnt need to prompt password each time to users when
+executing. The sudo password timeout can be set to indefinite by running
+"sudo visudo" and add the line "Defaults    timestamp_timeout=-1".
 
 ### How to use it
 * Run the script 'python-scripts/launch.py' from the OVS repo. The script
 doesnt work when it is called from places other than OVS repo. The launcher
 stores all the environment variable information in a file '.ovs-dpdk-script-env'
 in OVS repo directory. Each OVS repo has its own '.ovs-dpdk-script-env'
-file to hold its environment settings.
+file to hold its environment settings. A sample 'ovs-dpdk-script-env' file is
+available in the repo for reference.
 * Select the option to "SET-ALL-ENV" to set the environment for the OVS repo.
 This is a one time activity for the repo to set all the environment variables.
 Its possible to modify these values in future by using the options "SET-ALL-ENV"
@@ -37,7 +38,7 @@ or "SET-ONE-ENV".
 * once the environment is set, user can use all the remaining available options
 to do various compiling and test operations.
 * Its possible to add/delete environment variables to support different use
-cases. Modify "ENV_DICT" in launch.py accordingly.
+cases. Modify "ENV_DICT" in launch.py on need basis.
 * The bash script functions can also be added/deleted for the user requirement in
 the framework without much additional overhead. Modify the
 "BASH_SCRIPT_FNS" in launch.py to accommodate custom operations. Each entry in
@@ -45,23 +46,24 @@ the framework without much additional overhead. Modify the
 either in bash or a python.
 * The 'START-SUBSHELL' option enable users a start a new bash shell for
 executing the debug commands. The subshell has all the environment variables set
-to run any commands.
+to run any commands. It is advised to close the subshell after use.
 
 ### Bash Scripts
 These scripts are self sustained scripts that meant to do some specific task,
 such as run a test, build a repo and etc. These scripts are called by the
 python launcher module when a user selects specific option. Users can add
-their own custom scripts as they wish. Its possible to add scripts that can do
-multiple operations. The launcher module can also invoke specific function with
-in a script file.Launcher cannot pass user inputs to the bash scripts at run
-time. So all scripts must be self sustained to make use of this framework.
+their own custom scripts as they wish. Its possible to add multiple operations
+under one script file. The launcher module can also invoke specific function with
+in a script file. It is advisable to create self sustained user scripts with no
+user intervention while executing.
 
 ### Python Scripts
 The script 'launch.py' is a invoker for all the other scripts. Directly running
 the bash scripts may fail because environment for running the scripts are
 prepared by launch.py.
-To run the provided bash scripts directly, Run it on the subshell created by
-launch.py.
+However To run the provided bash scripts/command directly, The subshell option
+can be used. The subshell have all the user environment set for executing
+commands.
 
 **Please contact me if you are facing any issues while using the test
 infrastructure.**
