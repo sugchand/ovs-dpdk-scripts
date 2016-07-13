@@ -34,6 +34,7 @@ BUILD_DPDK_IVSHM : [build_script.sh, build_dpdk_ivshm]
 """
 BASH_SCRIPT_FNS = {
                    "CLEAN-TEST": ["clean_test.sh", "clean"],
+                   "PHY-PHY-VANILA-TEST": ["phy2phy_stockovs.sh", "menu"],
                    "PHY-PHY-TEST": ["phy2phy_manual.sh", "menu"],
                    "PHY-VXLAN-PHY-TEST": ["phy2phy_vxlan-bidir.sh", "menu"],
                    "PHY-VXLAN-PHY-noENCAP-TEST": ["phy2phy_vxlan-bidir-no-encap-traffic.sh", "menu"],
