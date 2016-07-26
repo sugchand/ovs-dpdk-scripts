@@ -80,7 +80,7 @@ function menu {
 }
 
 #The function has to get called only when its in subshell.
-if [ $OVS_RUN_SUBSHELL -eq 1 ]; then
+if [ "$OVS_RUN_SUBSHELL" == "1" ]; then
     menu
 fi
 
