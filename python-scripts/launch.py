@@ -207,6 +207,7 @@ def set_env_for_bash():
 
 def start_bash_shell():
     set_env_for_bash()
+    os.environ['OVS_RUN_SUBSHELL'] = '1'
     print_color_string("Opening a new subshell.......\n", color='blue')
     print_color_string("****************************************************\n"
                        "*****NOTE :: DO EXIT THE SUBSHELL AFTER THE USE*****\n"
