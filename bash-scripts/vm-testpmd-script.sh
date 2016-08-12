@@ -29,6 +29,6 @@ cd /root/ovdk/DPDK/app/test-pmd
 make clean
 make
 ./testpmd -c 0x3 -n 4 --socket-mem 128 -- --burst=64 -i --txqflags=0xf00
-set fwd mac_retry
+set fwd mac retry
 start
 
