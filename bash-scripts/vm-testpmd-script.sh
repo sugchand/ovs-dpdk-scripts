@@ -21,8 +21,8 @@ modprobe uio
 rmmod igb_uio
 
 insmod x86_64-native-linuxapp-gcc/kmod/igb_uio.ko
-./tools/dpdk_nic_bind.py --status
-./tools/dpdk_nic_bind.py -b igb_uio 00:03.0 00:04.0
+./tools/dpdk-devbind.py --status
+./tools/dpdk-devbind.py -b igb_uio 00:03.0 00:04.0
 
 # build and run 'test-pmd'
 cd /root/ovdk/DPDK/app/test-pmd
