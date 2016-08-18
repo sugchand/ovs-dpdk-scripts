@@ -23,7 +23,7 @@ EOT
 sleep 3
 }
 
-print_phy2phy_4flow_banner() {
+print_phy2phy_5flow_banner() {
 cat <<"EOT"
                                                                
                                                                
@@ -58,7 +58,9 @@ cat <<"EOT"
           | dl_src=00:00:00:00:00:04 || dl_src=00:00:00:00:FF:04 |
           | dl_dst=00:00:00:00:FF:04 || dl_dst=00:00:00:00:00:04 |
           |                          ||                          |
-
+          | dl_src=00:00:00:00:00:05 || dl_src=00:00:00:00:FF:05 |
+          | dl_dst=00:00:00:00:FF:05 || dl_dst=00:00:00:00:00:05 |
+          |                          ||                          |
 
 EOT
 sleep 3

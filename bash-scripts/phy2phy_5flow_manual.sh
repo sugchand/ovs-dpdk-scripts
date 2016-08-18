@@ -10,7 +10,7 @@ HUGE_DIR=/dev/hugepages
 
 function start_test {
 
-    print_phy2phy_4flow_banner
+    print_phy2phy_5flow_banner
 	sudo umount $HUGE_DIR
 	echo "Lets bind the ports to the kernel first"
 	sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
@@ -52,6 +52,9 @@ function start_test {
 
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=1,dl_src=00:00:00:00:00:04,dl_dst=00:00:00:00:FF:04,action=output:2
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=2,dl_src=00:00:00:00:FF:04,dl_dst=00:00:00:00:00:04,action=output:1
+
+    sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=1,dl_src=00:00:00:00:00:05,dl_dst=00:00:00:00:FF:05,action=output:2
+    sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=2,dl_src=00:00:00:00:FF:05,dl_dst=00:00:00:00:00:05,action=output:1
 
 	#sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=2,dl_dst=03:00:00:00:00:03,nw_dst=192.168.2.101,action=output:1
 	sudo $OVS_DIR/utilities/ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
