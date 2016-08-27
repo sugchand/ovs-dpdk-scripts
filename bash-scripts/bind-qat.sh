@@ -10,7 +10,7 @@ if [ -z "$DPDK_TARGET" ]; then
     exit 1
 fi
 
-[[ `id -u` -eq 0 ]] || { echo "Must be root to run script"; exit 1; }
+[[ `id -u` -eq 0 ]] || { echo "Must be root to run script, use 'su -p'"; exit 1; }
 echo $OVS_DIR $DPDK_DIR
 rmmod qat_dh895xccvf
 rmmod qat_dh895xcc
