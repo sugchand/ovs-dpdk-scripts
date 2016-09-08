@@ -20,6 +20,15 @@ function clean_repo {
     sudo apt-get purge --auto-remove openvswitch-common
 }
 
+function build_dpdk_gdb {
+    target="x86_64-native-linuxapp-gcc"
+    echo "Now Building DPDK...."
+    cd $DPDK_DIR && \
+    EXTRA_CFLAGS="-g -O0"  make install -j 20 T=$target \
+    CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
+    echo "DPDK build completed...."
+}
+
 function build_dpdk {
     target="x86_64-native-linuxapp-gcc"
     echo "Now Building DPDK...."

@@ -48,7 +48,7 @@ BASH_SCRIPT_FNS = {
                    # build the OVS with /var and /usr prefix than /usr/local
                    "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs_prefix"],
                    "BUILD-DPDK-NATIVE": ["build_script.sh", "build_dpdk"],
-                   "BUILD-DPDK-IVSHM": ["build_script.sh", "build_dpdk_ivshm"],
+                   "BUILD-DPDK-GDB": ["build_script.sh", "build_dpdk_gdb"],
                    "OVS-SANITY-UT": ["build_script.sh", "build_check"],
                    "OVS-PURGE-CLEAN": ["build_script.sh", "clean_repo"],
                    # Leave the script field empty when fn is python local.
