@@ -24,7 +24,7 @@ function build_dpdk_gdb {
     target="x86_64-native-linuxapp-gcc"
     echo "Now Building DPDK...."
     cd $DPDK_DIR && \
-    EXTRA_CFLAGS="-g -O0"  make install -j 20 T=$target \
+    EXTRA_CFLAGS="-g -O0"  make install -j T=$target \
     CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
     echo "DPDK build completed...."
 }
@@ -33,7 +33,7 @@ function build_dpdk {
     target="x86_64-native-linuxapp-gcc"
     echo "Now Building DPDK...."
     cd $DPDK_DIR && \
-    make install -j 20 T=$target \
+    make install -j T=$target \
     CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
     echo "DPDK build completed...."
 }
@@ -42,7 +42,7 @@ function build_dpdk_ivshm {
     echo "Now Building DPDK...."
     target="x86_64-ivshmem-linuxapp-gcc"
     cd $DPDK_DIR && \
-    make install -j 20 T=$target CONFIG_RTE_LIBRTE_VHOST=y \
+    make install -j T=$target CONFIG_RTE_LIBRTE_VHOST=y \
     CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST_USER=y \
     CONFIG_RTE_LIBRTE_IVSHMEM=y DESTDIR=install
     echo "DPDK build completed...."
@@ -57,7 +57,7 @@ function build_vanila_ovs {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20
+    make -j
     ret=$?
     echo "Vanila OVS build completed"
     return $ret
@@ -73,7 +73,7 @@ function build_vanila_ovs_prefix {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20
+    make -j
     ret=$?
     echo "Vanila OVS build with prefix completed"
     return $ret
@@ -81,7 +81,32 @@ function build_vanila_ovs_prefix {
 
 function build_ovs_default {
     cd $OVS_DIR
-    make -j 20 CFLAGS="-Ofast -march=native"
+    make -j CFLAGS="-Ofast -march=native"
+    ret=$?
+    echo "OVS build completed...."
+    return $ret
+}
+
+function build_ovs_and_dpdk_gdb_perf {
+    target="x86_64-native-linuxapp-gcc"
+    echo "Now Building DPDK...."
+    cd $DPDK_DIR && \
+    EXTRA_CFLAGS="-g -Ofast"  make install -j T=$target \
+    CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
+    if [ $? -ne 0 ]; then
+        echo "Cannot compile DPDK.."
+        return 1
+    fi
+    echo "DPDK build completed...."
+    echo "Now Building OVS using $DPDK_DIR/$target/"
+    cd $OVS_DIR && \
+    ./boot.sh && \
+    ./configure CFLAGS="-g -Ofast" --with-dpdk=$DPDK_DIR/$target/
+    if [ $? -ne 0 ]; then
+        echo "Cannot compile, configure failed.."
+        return 1
+    fi
+    make -j CFLAGS="-g -Ofast -march=native -Q"
     ret=$?
     echo "OVS build completed...."
     return $ret
@@ -97,7 +122,7 @@ function build_ovs_gdb {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 CFLAGS="-g -march=native -Q"
+    make -j CFLAGS="-g -march=native -Q"
     ret=$?
     echo "OVS build completed...."
     return $ret
@@ -113,7 +138,7 @@ function build_ovs {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 CFLAGS="-Ofast -march=native"
+    make -j CFLAGS="-Ofast -march=native"
     ret=$?
     echo "OVS build completed...."
     return $ret
@@ -129,7 +154,7 @@ function build_ovs_ivshm {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 CFLAGS="-Ofast -march=native"
+    make -j CFLAGS="-Ofast -march=native"
     ret=$?
     echo "OVS build completed...."
     return $ret
@@ -144,7 +169,7 @@ function build_qemu {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20
+    make -j
     ret=$?
     echo "QEMU build completed...."
     return $ret
@@ -163,7 +188,7 @@ function build_check {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 2>&1 | tail -10 >> $TEST_RESULTS
+    make -j 2>&1 | tail -10 >> $TEST_RESULTS
     echo "****OVS-CLANG build completed****" >> $TEST_RESULTS 2>&1
 
     echo "***Now building OVS with linux***"
@@ -174,7 +199,7 @@ function build_check {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 2>&1 | tail -10 >> $TEST_RESULTS
+    make -j 2>&1 | tail -10 >> $TEST_RESULTS
     echo "***Vanila OVS build completed***" >> $TEST_RESULTS 2>&1
 
     echo "***Now running UT on OVS+Linux......***" >> $TEST_RESULTS 2>&1
@@ -189,7 +214,7 @@ function build_check {
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j 20 CFLAGS="-Ofast -march=native" 2>&1 | tail -10 >> $TEST_RESULTS
+    make -j CFLAGS="-Ofast -march=native" 2>&1 | tail -10 >> $TEST_RESULTS
     echo "***OVS-DPDK build completed....***" >> $TEST_RESULTS 2>&1
 
     echo "***Now running UT on OVS+DPDK......***" >> $TEST_RESULTS 2>&1
