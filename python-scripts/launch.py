@@ -45,6 +45,7 @@ BASH_SCRIPT_FNS = {
                    "BUILD-OVS-DPDK-NATIVE": ["build_script.sh", "build_ovs"],
                    "BUILD-OVS-DPDK-IVSHM": ["build_script.sh", "build_ovs_ivshm"],
                    "BUILD-VANILA-OVS": ["build_script.sh", "build_vanila_ovs"],
+                   "BUILD-OVS+DPDK-PERF-GDB": ["build_script.sh", "build_ovs_and_dpdk_gdb_perf"],
                    # build the OVS with /var and /usr prefix than /usr/local
                    "BUILD-VANILA-OVS-PREFIX": ["build_script.sh", "build_vanila_ovs_prefix"],
                    "BUILD-DPDK-NATIVE": ["build_script.sh", "build_dpdk"],
