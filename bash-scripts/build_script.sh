@@ -81,7 +81,7 @@ function build_vanila_ovs_prefix {
 
 function build_ovs_default {
     cd $OVS_DIR
-    make -j CFLAGS="-Ofast -march=native"
+    make -j CFLAGS="-g -Ofast -march=native"
     ret=$?
     echo "OVS build completed...."
     return $ret

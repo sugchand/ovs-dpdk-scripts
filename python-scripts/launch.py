@@ -18,6 +18,8 @@ ENV_DICT = {
             "DPDK_NIC2" : "",
             "DPDK_PCI1" : "",
             "DPDK_PCI2" : "",
+            "DPDK_PCI3" : "",
+            "DPDK_PCI4" : "",
             "VHOST_NIC1" : "",
             "VHOST_NIC2" : "",
             "KERNEL_NIC_DRV" : "",
@@ -36,6 +38,7 @@ BASH_SCRIPT_FNS = {
                    "CLEAN-TEST-SYSTEM": ["clean_test.sh", "clean"],
                    "PHY-PHY-VANILA-TEST": ["phy2phy_stockovs.sh", "menu"],
                    "PHY-PHY-TEST": ["phy2phy_manual.sh", "menu"],
+                   "PHY-PHY-BOND-TEST": ["phy2phy-bond-bidir.sh", "menu"],
                    "PHY-VXLAN-PHY-TEST": ["phy2phy_vxlan-bidir.sh", "menu"],
                    "PHY-VXLAN-PHY-noENCAP-TEST": ["phy2phy_vxlan-bidir-no-encap-traffic.sh", "menu"],
                    "PHY-VM-PHY-TEST": ["phy2vm_manual.sh", "menu"],
@@ -89,8 +92,8 @@ def is_ovs_repo(dir_path):
         print_color_string("The directory path is wrong", color='red')
         return False
 
-    file1 = dir_path + "/INSTALL.md"
-    file2 = dir_path + "/INSTALL.DPDK.md"
+    file1 = dir_path + "/INSTALL.rst"
+    file2 = dir_path + "/INSTALL.DPDK.rst"
 
     if not (os.path.isfile(file1) and os.path.isfile(file2)):
         print_color_string("Not in OVS repo, INSTALL files missing",

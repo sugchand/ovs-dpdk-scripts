@@ -1,5 +1,15 @@
 #!/bin/bash
 
+print_phy2phy_bond_banner() {
+cat <<"EOT" 
+
+->dpdk0 -\       /- dpdk2 -|- dpdk0 -\       /- dpdk2 ->
+         ->OVS -<-         |         ->OVS -<-         
+->dpdk1 -/       \- dpdk3 -|- dpdk1 -/       \- dpdk3 ->
+
+EOT                                                                             
+sleep 3                                                                         
+} 
 print_phy2phy_banner() {
 cat <<"EOT"
 
