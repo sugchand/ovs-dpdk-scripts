@@ -36,30 +36,30 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
-    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch .  other_config:n-handler-threads=1
 
     sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
     sleep 22
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk0 -- set Interface dpdk0 type=dpdk
-    sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk1 -- set Interface dpdk1 type=dpdk
-    #sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk2 -- set Interface dpdk2 type=dpdk
-    #sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk3 -- set Interface dpdk3 type=dpdk
-    sudo $OVS_DIR/utilities/ovs-vsctl add-bond br0 dpdkbond1 dpdk2 dpdk3 \
+    sudo $OVS_DIR/utilities/ovs-vsctl add-bond br0 dpdkbond1 dpdk0 dpdk1 \
                                                     lacp=active \
-                                                    -- set Interface dpdk2 type=dpdk \
-                                                    -- set Interface dpdk3 type=dpdk
-
-    sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-slb
-#   sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-tcp
-#   sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=active-backup
+                                                    -- set Interface dpdk0 type=dpdk \
+                                                    -- set Interface dpdk1 type=dpdk
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC1 \
+                                -- set Interface $VHOST_NIC1 type=dpdkvhostuser
+#    sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-slb
+#    sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-tcp
+    sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=active-backup
     sudo $OVS_DIR/utilities/ovs-ofctl del-flows br0
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 actions=NORMAL
     sudo $OVS_DIR/utilities/ovs-ofctl dump-flows br0
     sudo $OVS_DIR/utilities/ovs-ofctl dump-ports br0
     sudo $OVS_DIR/utilities/ovs-vsctl show
     sudo $OVS_DIR/utilities/ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
+
+    sleep 5
+    echo "launching the VM"
+    sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on -numa node,memdev=mem -mem-prealloc -smp 2 -drive file=$VM_IMAGE -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1 -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce -device virtio-net-pci,mac=00:00:00:00:00:01,netdev=mynet1,mrg_rxbuf=off --nographic -snapshot -vnc :5
 
     echo "Finished setting up the bridge, ports and flows..."
 }
