@@ -6,10 +6,12 @@ echo $OVS_DIR $DPDK_DIR
 
 # Variables #
 HUGE_DIR=/dev/hugepages
+SOCK_DIR=/usr/local/var/run/openvswitch
+MEM=4096M
 
 
 function start_test {
-    print_phy2phy_bond_banner
+    print_phy2vm_bond_banner
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
     sudo $DPDK_DIR/tools/dpdk-devbind.py -u $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4
@@ -59,7 +61,14 @@ function start_test {
 
     sleep 5
     echo "launching the VM"
-    sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on -numa node,memdev=mem -mem-prealloc -smp 2 -drive file=$VM_IMAGE -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1 -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce -device virtio-net-pci,mac=00:00:00:00:00:01,netdev=mynet1,mrg_rxbuf=off --nographic -snapshot -vnc :5
+    if [ -z "$VHOST_MAC1" ]; then
+        VHOST_MAC1="00:00:00:00:00:01"
+    fi
+    if [ -z "$VHOST_MAC2"} ]; then
+        VHOST_MAC2="00:00:00:00:00:02"
+    fi
+
+    sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on -numa node,memdev=mem -mem-prealloc -smp 2 -drive file=$VM_IMAGE -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1 -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce -device virtio-net-pci,mac="$VHOST_MAC1",netdev=mynet1,mrg_rxbuf=off --nographic -snapshot -vnc :5
 
     echo "Finished setting up the bridge, ports and flows..."
 }

@@ -22,6 +22,8 @@ ENV_DICT = {
             "DPDK_PCI4" : "",
             "VHOST_NIC1" : "",
             "VHOST_NIC2" : "",
+            "VHOST_MAC1" : "",
+            "VHOST_MAC2" : "",
             "KERNEL_NIC_DRV" : "",
             "DPDK_TARGET" : "",
             "PMD_CPU_MASK" : ""
