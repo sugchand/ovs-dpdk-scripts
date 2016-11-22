@@ -3,16 +3,20 @@
 # setting option in the launcher script.
 
 
-QEMU_DIR:-/home/sugeshch/repo/ovs_dpdk/qemu
 PMD_CPU_MASK:-8
+QEMU_DIR:-/home/sugeshch/repo/ovs_dpdk/qemu
+DPDK_PCI2:-0000:07:00.1
+VHOST_MAC1:-00:00:00:00:00:01
 DPDK_TARGET:-x86_64-native-linuxapp-gcc
-OVS_DIR:-/home/sugeshch/repo/ovs_master
-KERNEL_NIC_DRV:-ixgbe
-DPDK_NIC1:-dpdk0
-DPDK_NIC2:-dpdk1
-DPDK_PCI2:-0000:0a:00.1
+DPDK_PCI3:-0000:07:00.2
 VM_IMAGE:-/home/sugeshch/repo/test_scripts/ovdk_guest_release.qcow2
-DPDK_PCI1:-0000:0a:00.0
+DPDK_PCI1:-0000:07:00.0
 DPDK_DIR:-/home/sugeshch/repo/dpdk_master
+VHOST_MAC2:-00:00:00:00:00:02
+DPDK_PCI4:-0000:07:00.3
+OVS_DIR:-/home/sugeshch/repo/ovs_master
+KERNEL_NIC_DRV:-i40e
+DPDK_NIC1:-dpdk0
 VHOST_NIC2:-dpdkvhostuser1
 VHOST_NIC1:-dpdkvhostuser0
+DPDK_NIC2:-dpdk1
