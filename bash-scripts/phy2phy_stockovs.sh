@@ -31,14 +31,14 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/vswitchd/ovs-vswitchd unix:/usr/local/var/run/openvswitch/db.sock --pidfile --detach --log-file=/var/log/openvswitch/ovs-vswitchd.log -vconsole:err -vsyslog:info -vfile:info
 
-    port1=`sudo $DPDK_DIR/tools/dpdk-devbind.py --status |grep $DPDK_PCI1 |cut -d ' ' -f7 |cut -d '=' -f2`
-    port2=`sudo $DPDK_DIR/tools/dpdk-devbind.py --status |grep $DPDK_PCI2 |cut -d ' ' -f7 |cut -d '=' -f2`
+    port1=$(sudo $DPDK_DIR/tools/dpdk-devbind.py --status |grep $DPDK_PCI1 | sed -n 's/.* if=\([a-zA-Z0-9_]\+\).*/\1/p')
+    port2=$(sudo $DPDK_DIR/tools/dpdk-devbind.py --status |grep $DPDK_PCI2 | sed -n 's/.* if=\([a-zA-Z0-9_]\+\).*/\1/p')
     if [[ -z  $port1 ]]; then
-        echo "The $DPDK_PCI1 is not bound to kernel/not found"
+        echo "PCI device $DPDK_PCI1 is not bound to kernel/not found"
         exit 1
     fi
     if [[ -z $port2 ]]; then
-        echo "The $DPDK_PCI2 is not bound to kernel/not found"
+        echo "PCI device $DPDK_PCI2 is not bound to kernel/not found"
         exit 1
     fi
     echo "Switching off the auto-negotiation to avoid rate limiting"
