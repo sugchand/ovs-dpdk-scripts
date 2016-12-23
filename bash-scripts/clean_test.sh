@@ -9,7 +9,7 @@ function clean {
     sudo $OVS_DIR/utilities/ovs-appctl -t ovsdb-server exit
     sleep 1
     sudo umount $HUGE_DIR
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --unbind $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4
+    #sudo $DPDK_DIR/tools/dpdk-devbind.py --unbind $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4
     sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
     sudo pkill -9 ovs-vswitchd
     sudo pkill -9 ovs-vsctl

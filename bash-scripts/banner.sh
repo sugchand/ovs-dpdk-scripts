@@ -22,6 +22,25 @@ EOT
 sleep 3
 }
 
+print_pvp_vlan_banner() {                           
+cat <<"EOT"                                         
+                                                    
+                     {pop_vlan}                     
+{vlan 10} ==> dpdk0 ==> OVS ==> vhostuser0 ==> VM   
+                                                    
+                     {pop_vlan}                     
+{vlan 20} ==> dpdk0 ==> OVS ==> vhostuser1 ==> VM   
+                                                    
+                    {push_vlan,10}                  
+VM ==> vhostuser0 ==> OVS ==> dpdk0 ==> {vlan 10}   
+                                                    
+                    {push_vlan,20}                  
+VM ==> vhostuser1 ==> OVS ==> dpdk0 ==> {vlan 20}   
+                                                    
+EOT                                                 
+sleep 3                                             
+}
+
 print_phy2phy_banner() {
 cat <<"EOT"
 
