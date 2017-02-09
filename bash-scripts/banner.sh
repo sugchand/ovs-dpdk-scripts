@@ -37,8 +37,8 @@ VM ==> vhostuser0 ==> OVS ==> dpdk0 ==> {vlan 10}
                     {push_vlan,20}                  
 VM ==> vhostuser1 ==> OVS ==> dpdk0 ==> {vlan 20}   
                                                     
-EOT                                                 
-sleep 3                                             
+EOT
+sleep 3
 }
 
 print_phy2phy_banner() {

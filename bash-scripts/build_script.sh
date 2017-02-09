@@ -128,6 +128,22 @@ function build_ovs_gdb {
     return $ret
 }
 
+function build_p4_ovs {
+    target="x86_64-native-linuxapp-gcc"
+    echo "Now Building OVS using $DPDK_DIR/$target/"
+    cd $OVS_DIR && \
+    ./boot.sh && \
+    ./configure CFLAGS="-g -Ofast"  p4inputfile=/home/sugeshch/repo/ovs_dpdk-2/ovs/include/p4/examples/l2-switch.p4 --with-dpdk=$DPDK_DIR/$target/
+    if [ $? -ne 0 ]; then
+        echo "Cannot compile, configure failed.."
+        return 1
+    fi
+    make -j CFLAGS="-Ofast -march=native"
+    ret=$?
+    echo "OVS build completed...."
+    return $ret
+}
+
 function build_ovs {
     target="x86_64-native-linuxapp-gcc"
     echo "Now Building OVS using $DPDK_DIR/$target/"
