@@ -95,8 +95,8 @@ def is_ovs_repo(dir_path):
         print_color_string("The directory path is wrong", color='red')
         return False
 
-    file1 = dir_path + "/INSTALL.rst"
-    file2 = dir_path + "/INSTALL.DPDK.rst"
+    file1 = dir_path + "/Documentation/howto/dpdk.rst"
+    file2 = dir_path + "/Documentation/intro/what-is-ovs.rst"
 
     if not (os.path.isfile(file1) and os.path.isfile(file2)):
         print_color_string("Not in OVS repo, INSTALL files missing",
