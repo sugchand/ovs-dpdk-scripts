@@ -48,8 +48,8 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br-p2 -- set bridge br-p2 datapath_type=netdev
 
     echo "Adding ports to bridges.."
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-in dpdk0 -- set Interface dpdk0 type=dpdk
-	sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-out dpdk1 -- set Interface dpdk1 type=dpdk
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-in $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1 
+	sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-out $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-in patch1S1 -- set Interface patch1S1 type=patch options:peer=patch1S2
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-in patch2S1 -- set Interface patch2S1 type=patch options:peer=patch2S2
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-p1 patch1S2 -- set Interface patch1S2 type=patch options:peer=patch1S1

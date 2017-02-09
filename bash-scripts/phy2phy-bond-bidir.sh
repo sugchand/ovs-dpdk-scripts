@@ -42,14 +42,14 @@ function start_test {
     sleep 22
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk0 -- set Interface dpdk0 type=dpdk
-    sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk1 -- set Interface dpdk1 type=dpdk
-    #sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk2 -- set Interface dpdk2 type=dpdk
-    #sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 dpdk3 -- set Interface dpdk3 type=dpdk
-    sudo $OVS_DIR/utilities/ovs-vsctl add-bond br0 dpdkbond1 dpdk2 dpdk3 \
+    sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1
+    sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
+    #sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 $DPDK_NIC3 -- set Interface $DPDK_NIC3 type=dpdk options:dpdk-devargs=$DPDK_PCI3
+    #sudo $OVS_DIR/utilities/ovs-vsctl add-port br0 $DPDK_NIC4 -- set Interface $DPDK_NIC4 type=dpdk options:dpdk-devargs=$DPDK_PCI4
+    sudo $OVS_DIR/utilities/ovs-vsctl add-bond br0 dpdkbond1 $DPDK_NIC3 $DPDK_NIC4 \
                                                     lacp=active \
-                                                    -- set Interface dpdk2 type=dpdk \
-                                                    -- set Interface dpdk3 type=dpdk
+                                                    -- set Interface $DPDK_NIC3 type=dpdk options:dpdk-devargs=$DPDK_PCI3 \
+                                                    -- set Interface $DPDK_NIC4 type=dpdk options:dpdk-devargs=$DPDK_PCI4
 
     sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-slb
 #   sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-tcp

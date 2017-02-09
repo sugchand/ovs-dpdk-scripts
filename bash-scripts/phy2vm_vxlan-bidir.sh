@@ -33,7 +33,7 @@ function start_test {
     sleep 22
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set Bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC1
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set Interface $DPDK_NIC1 type=dpdk
 
 # if flow setting the VNI , create vxlan port as below
@@ -46,7 +46,7 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br-phy
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br-phy -- set Bridge br-phy datapath_type=netdev
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set bridge br-phy other_config:hwaddr=00:00:64:00:00:01
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-phy $DPDK_NIC2
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-phy $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set Interface $DPDK_NIC2 type=dpdk
 
     sudo ip addr add 10.0.0.1/24 dev br-phy

@@ -43,10 +43,10 @@ function start_test {
     sleep 22
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl add-bond br0 dpdkbond1 dpdk0 dpdk1 \
+    sudo $OVS_DIR/utilities/ovs-vsctl add-bond br0 dpdkbond1 $DPDK_NIC1 $DPDK_NIC2 \
                                                     lacp=active \
-                                                    -- set Interface dpdk0 type=dpdk \
-                                                    -- set Interface dpdk1 type=dpdk
+                                                    -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1 \
+                                                    -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC1 \
                                 -- set Interface $VHOST_NIC1 type=dpdkvhostuser
 #    sudo $OVS_DIR/utilities/ovs-vsctl set port dpdkbond1 bond_mode=balance-slb

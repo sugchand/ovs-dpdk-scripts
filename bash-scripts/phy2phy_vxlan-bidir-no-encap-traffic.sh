@@ -45,8 +45,8 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set bridge br-tun1 other_config:hwaddr=00:00:10:00:00:01
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set bridge br-tun2 other_config:hwaddr=00:00:20:00:00:01
 
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-phy1 $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-phy2 $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-phy1 $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-phy2 $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
     sudo $OVS_DIR/utilities/ovs-vsctl add-port br-phy1 vxlan0 -- set interface vxlan0 type=vxlan options:remote_ip=10.0.0.2 options:key=1000
     sudo $OVS_DIR/utilities/ovs-vsctl add-port br-phy2 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=20.0.0.2 options:key=1000
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br-tun1 br-tun1-p -- set interface br-tun1-p type=patch options:peer=br-tun2-p
