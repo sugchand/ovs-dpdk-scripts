@@ -1,9 +1,6 @@
 # ovs-dpdk-scripts
 ===================
-
-**Note: OVS and DPDK configuration steps are keep changing from release to
-release. Please use the right script branch based on the OVS and DPDK release.**
-
+Note: OVS DPDK script that work with OVS 2.7 and DPDK 16.11 release
 
 This is a set of bash scripts and launcher python module to ease of developer's
  job who is working on OVS, DPDK. This framework can be used for any code
