@@ -31,6 +31,7 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
+	sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
 
 	sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
 	sleep 22
@@ -57,7 +58,6 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=2,dl_src=00:00:00:00:FF:05,dl_dst=00:00:00:00:00:05,action=output:1
 
 	#sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=2,dl_dst=03:00:00:00:00:03,nw_dst=192.168.2.101,action=output:1
-	sudo $OVS_DIR/utilities/ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
 	sudo $OVS_DIR/utilities/ovs-ofctl dump-flows br0
 	sudo $OVS_DIR/utilities/ovs-ofctl dump-ports br0
 	sudo $OVS_DIR/utilities/ovs-vsctl show
