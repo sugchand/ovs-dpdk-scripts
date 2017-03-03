@@ -136,6 +136,13 @@ def read_and_display_env():
 
     env_fp = open(env_, 'r')
     for line in env_fp.readlines():
+        if not line:
+            continue
+        if line.startswith("#"):
+                # Comment line , do nothing.
+	    continue
+	if ":-" not in line:
+            continue
         (key, value) = line.split(':-')
 
         if not (key and value):
