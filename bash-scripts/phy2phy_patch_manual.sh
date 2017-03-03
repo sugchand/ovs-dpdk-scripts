@@ -31,6 +31,7 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch .  other_config:n-handler-threads=1
+	sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
 
 	sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
 	sleep 22
@@ -88,7 +89,6 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-ofctl dump-ports br-p2
 
 	sudo $OVS_DIR/utilities/ovs-vsctl show
-	sudo $OVS_DIR/utilities/ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
 
 	echo "Finished setting up the bridge, ports and flows..."
 }
