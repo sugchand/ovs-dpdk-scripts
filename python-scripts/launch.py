@@ -6,7 +6,11 @@ import collections
 try:
     from termcolor import colored
 except ImportError:
-    raise ImportError('Install colored by \"sudo pip install termcolor\"')
+    print "If you use 'pip install termcolor' this will be in glorious color :)"
+    print "Trudging on with boring monochrome :( ..."
+    def colored (string_, color, attrs):
+        """Supply null-op for termcolor.colored"""
+        return string_
 
 # Holds all the environment settings that needed for OVS-DPDK scripts
 ENV_DICT = {
