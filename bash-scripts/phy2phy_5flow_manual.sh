@@ -13,14 +13,14 @@ function start_test {
     print_phy2phy_5flow_banner
 	sudo umount $HUGE_DIR
 	echo "Lets bind the ports to the kernel first"
-	sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
-    mkdir -p $HUGE_DIR
+	sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
+        mkdir -p $HUGE_DIR
 	sudo mount -t hugetlbfs nodev $HUGE_DIR
 
 	sudo modprobe uio
 	sudo rmmod igb_uio.ko
-	sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-	sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+	sudo insmod $DPDK_IGB_UIO
+	sudo $DPDK_BIND_TOOL $DPDK_PCI1 $DPDK_PCI2
 
 	sudo rm /usr/local/etc/openvswitch/conf.db
 	sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
