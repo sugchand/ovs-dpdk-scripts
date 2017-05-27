@@ -17,7 +17,7 @@ function start_test {
     print_phy2phy_banner
     umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
+    sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
     sudo rmmod openvswitch
     sudo mkdir -p /usr/local/etc/openvswitch
     sudo mount -t hugetlbfs nodev $HUGE_DIR
@@ -31,8 +31,8 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/vswitchd/ovs-vswitchd unix:/usr/local/var/run/openvswitch/db.sock --pidfile --detach --log-file=/var/log/openvswitch/ovs-vswitchd.log -vconsole:err -vsyslog:info -vfile:info
 
-    port1=$(sudo $DPDK_DIR/tools/dpdk-devbind.py --status |grep $DPDK_PCI1 | sed -n 's/.* if=\([a-zA-Z0-9_]\+\).*/\1/p')
-    port2=$(sudo $DPDK_DIR/tools/dpdk-devbind.py --status |grep $DPDK_PCI2 | sed -n 's/.* if=\([a-zA-Z0-9_]\+\).*/\1/p')
+    port1=$(sudo $DPDK_BIND_TOOL --status |grep $DPDK_PCI1 | sed -n 's/.* if=\([a-zA-Z0-9_]\+\).*/\1/p')
+    port2=$(sudo $DPDK_BIND_TOOL --status |grep $DPDK_PCI2 | sed -n 's/.* if=\([a-zA-Z0-9_]\+\).*/\1/p')
     if [[ -z  $port1 ]]; then
         echo "PCI device $DPDK_PCI1 is not bound to kernel/not found"
         exit 1

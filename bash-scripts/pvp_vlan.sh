@@ -11,7 +11,7 @@ MEM=4096M
 function start_test {
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
+    sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
 
     sudo mount -t hugetlbfs nodev $HUGE_DIR
     sudo rm $SOCK_DIR/$VHOST_NIC1
@@ -19,8 +19,8 @@ function start_test {
 
     sudo modprobe uio
     sudo rmmod igb_uio.ko
-    sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+    sudo insmod $DPDK_IGB_UIO
+    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
     print_pvp_vlan_banner
     sudo rm /usr/local/etc/openvswitch/conf.db
