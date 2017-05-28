@@ -13,7 +13,6 @@ function start_test {
 
     print_phy2phy_banner
     set_dpdk_env
-    echo $DPDK_IGB_UIO $DPDK_BIND_TOOL
 
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"

@@ -30,7 +30,8 @@ ENV_DICT = {
             "VHOST_MAC2" : "",
             "KERNEL_NIC_DRV" : "",
             "DPDK_TARGET" : "",
-            "PMD_CPU_MASK" : ""
+            "PMD_CPU_MASK" : "",
+            "DPDK_VER" : ""
             }
 ENV_FILE_NAME = ".ovs-dpdk-script-env"
 
