@@ -11,6 +11,7 @@ HUGE_DIR=/dev/hugepages
 
 function start_test {
     print_phy2phy_bond_banner
+    set_dpdk_env
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
     sudo $DPDK_BIND_TOOL -u $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4

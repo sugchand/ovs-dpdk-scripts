@@ -6,6 +6,8 @@
 HUGE_DIR=/dev/hugepages
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
+echo $OVS_DIR $DPDK_DIR
 
 
 function start_test {
@@ -16,6 +18,7 @@ function start_test {
     sudo mount -t hugetlbfs nodev $HUGE_DIR
 
     print_phy_2vxlan_phy_banner
+    set_dpdk_env
     sudo modprobe uio
     sudo insmod $DPDK_IGB_UIO
     sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2

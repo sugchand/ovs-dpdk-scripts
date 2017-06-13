@@ -3,12 +3,14 @@
 # Variables #
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
 
 SOCK_DIR=/usr/local/var/run/openvswitch
 HUGE_DIR=/dev/hugepages
 MEM=4096M
 
 function start_test {
+    set_dpdk_env
     sudo umount $HUGE_DIR
     sudo mount -t hugetlbfs nodev $HUGE_DIR
     sudo rm $SOCK_DIR/$VHOST_NIC1
@@ -16,12 +18,13 @@ function start_test {
 
     sudo modprobe uio
     sudo rmmod igb_uio.ko
-    sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
+    sudo insmod $DPDK_IGB_UIO
 
-    sudo rm /usr/local/etc/openvswitch/conf.db
-    sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
+    #sudo rm /usr/local/etc/openvswitch/conf.db
+    #sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
+    std_start_db
 
-    sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
+    #sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"

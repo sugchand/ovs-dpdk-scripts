@@ -2,6 +2,8 @@
 
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
+
 echo $OVS_DIR $DPDK_DIR
 
 # Variables #
@@ -11,6 +13,7 @@ HUGE_DIR=/dev/hugepages
 function start_test {
 
     print_phy2phy_5flow_banner
+    set_dpdk_env
 	sudo umount $HUGE_DIR
 	echo "Lets bind the ports to the kernel first"
 	sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
