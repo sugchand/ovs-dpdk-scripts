@@ -6,9 +6,11 @@
 HUGE_DIR=/dev/hugepages
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
 
 
 function start_test {
+    set_dpdk_env
     sudo mkdir -p $HUGE_DIR
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
@@ -19,8 +21,9 @@ function start_test {
     sudo insmod $DPDK_IGB_UIO
     sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
-    sudo rm /usr/local/etc/openvswitch/conf.db
-    sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
+    #sudo rm /usr/local/etc/openvswitch/conf.db
+    #sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
+    std_start_db
 
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
@@ -109,6 +112,10 @@ function kill_switch {
     sudo rm -rf /usr/local/var/run/openvswitch/*
     sudo rm -rf /usr/local/var/log/openvswitch/*
     sudo pkill -f pmd*
+    sudo ip link del br-phy1
+    sudo ip link del br-phy2
+    sudo ip link del br-tun1
+    sudo ip link del br-tun2
 }
 
 function menu {
