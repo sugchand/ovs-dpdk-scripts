@@ -2,6 +2,7 @@
 
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
 echo $OVS_DIR $DPDK_DIR
 
 # Variables #
