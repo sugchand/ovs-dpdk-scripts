@@ -96,6 +96,8 @@ function kill_switch {
     sudo rm -rf /usr/local/var/run/openvswitch/*
     sudo rm -rf /usr/local/var/log/openvswitch/*
     sudo pkill -f pmd*
+    sudo ip link del br-phy
+    sudo ip link del br0
 }
 
 function menu {
