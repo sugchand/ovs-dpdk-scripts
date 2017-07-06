@@ -6,6 +6,7 @@
 # SOCK_DIR=/tmp
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
 
 SOCK_DIR=/usr/local/var/run/openvswitch
 HUGE_DIR=/dev/hugepages
@@ -15,6 +16,7 @@ MEM=4096M
 function start_test {
 
     print_phy2phy_banner
+    set_dpdk_env
     umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
     sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
@@ -23,8 +25,8 @@ function start_test {
     sudo mount -t hugetlbfs nodev $HUGE_DIR
 
 
-    sudo modprobe gre libcrc32c nf_conntrack nf_conntrack_ipv4 nf_conntrack_ipv6 nf_nat_ipv4 nf_nat_ipv6 nf_defrag_ipv6 nf_defrag_ipv4
-    sudo insmod $OVS_DIR/datapath/linux/openvswitch.ko
+    sudo make -C $OVS_DIR modules_install
+    sudo modprobe openvswitch
     sudo rm /usr/local/etc/openvswitch/conf.db
     sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
     sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --pidfile --detach
@@ -83,6 +85,8 @@ function kill_switch {
     sudo rm -rf /usr/local/var/run/openvswitch/*
     sudo rm -rf /usr/local/var/log/openvswitch/*
     sudo pkill -9 pmd*
+    sudo ip link set dev br0 down
+    sudo ip link del br0
 }
 
 function menu {
