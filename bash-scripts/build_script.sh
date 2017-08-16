@@ -81,7 +81,7 @@ function build_vanila_ovs_prefix {
 
 function build_ovs_default {
     cd $OVS_DIR
-    make -j CFLAGS="-g -Ofast -march=native"
+    make -j CFLAGS="-g3 -march=native"
     ret=$?
     echo "OVS build completed...."
     return $ret
@@ -117,12 +117,12 @@ function build_ovs_gdb {
     echo "Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
-    ./configure CFLAGS="-g" --with-dpdk=$DPDK_DIR/$target/
+    ./configure CFLAGS="-g3" --with-dpdk=$DPDK_DIR/$target/
     if [ $? -ne 0 ]; then
         echo "Cannot compile, configure failed.."
         return 1
     fi
-    make -j CFLAGS="-g -march=native -Q"
+    make -j CFLAGS="-g3 -march=native -Q"
     ret=$?
     echo "OVS build completed...."
     return $ret
