@@ -3,6 +3,8 @@ import os
 import subprocess
 import sys
 import collections
+import re
+
 try:
     from termcolor import colored
 except ImportError:
@@ -87,9 +89,10 @@ def run_bash_command(cmd, *args):
         print_color_string("Failed to run the bash command, " + e,
                            color = 'red')
     out.wait()
+    return out.returncode
 
 def run_bash_command_with_list_args(cmd, args):
-    run_bash_command(cmd, *args)
+    return run_bash_command(cmd, *args)
 
 def is_ovs_repo(dir_path):
     if not dir_path:
@@ -247,28 +250,55 @@ def run_bash_script_fn(script_file, fn):
                                                 "/bash-scripts"
     script_file = script_path + "/" + script_file
     set_env_for_bash()
-    run_bash_command("bash", "-c", ". " + script_file + "; " + fn)
+    return run_bash_command("bash", "-c", ". " + script_file + "; " + fn)
 
 def list_and_run():
     for i, (key, value) in enumerate(BASH_SCRIPT_FNS.iteritems()):
         print_color_string(str(i) + " : " + key, color="cyan")
-    choice = (raw_input("Enter your choice[0-%d] : " %i))
 
-    if choice == "":
-        print_color_string("Invalid Choice, Exiting...", color = "red")
-        return
+    # keep asking user for a list of choices until they are all valid
+    choices = []
+    while True:
+        choices = []
+        choices_str = raw_input("Enter your (list of) choice(s)[0-%d] : " %i)
+        if not choices_str:
+            print_color_string("Invalid Choice...", color = "red")
+            continue
 
-    choice = int(choice)
-    if choice < 0 or choice > i:
-        print_color_string("Invalid Choice, Exiting...", color = "red")
-        return
+        choices_str_list = re.split(" |,", choices_str)
+        choices_str_list = [s.strip() for s in choices_str_list if s]
+        for choice_str in choices_str_list:
+            try:
+                choice_int = int(choice_str)
+            except:
+                print_color_string("Choice '%s' is not an integer..." % \
+                    choice_str, color = "red")
+                break
 
-    script_file = BASH_SCRIPT_FNS.values()[choice][0]
-    fn = BASH_SCRIPT_FNS.values()[choice][1]
-    if script_file:
-        run_bash_script_fn(script_file, fn)
-    else:
-        eval(fn)()
+            if choice_int < 0 or choice_int > i:
+                print_color_string("Choice %d is out of range..." % \
+                    choice_int, color = "red")
+                break
+
+            choices.append(choice_int)
+        else:
+            # look did not break - all chocices are valid
+            break
+
+    # exec each of the choices in turn - exit if one fails
+    for choice in choices:
+        choice_name = BASH_SCRIPT_FNS.keys()[choice]
+        print_color_string(choice_name, color = "green")
+        script_file = BASH_SCRIPT_FNS.values()[choice][0]
+        fn = BASH_SCRIPT_FNS.values()[choice][1]
+        if script_file:
+            if run_bash_script_fn(script_file, fn) != 0:
+                print_color_string("'%s' FAILED. Quitting..." % \
+                    choice_name, color = "red")
+                break
+        else:
+            # choices that correspond to internal python fns cannot fail
+            eval(fn)()
 
 def main():
 
