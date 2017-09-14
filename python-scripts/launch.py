@@ -260,7 +260,13 @@ def list_and_run():
     choices = []
     while True:
         choices = []
-        choices_str = raw_input("Enter your (list of) choice(s)[0-%d] : " %i)
+
+        # Treat cli args as if entered to choice query
+        if not sys.argv:
+            choices_str = raw_input("Enter your (list of) choice(s)[0-%d] : " %i)
+        else:
+            choices_str = " ".join(sys.argv[1:])
+            sys.argv = []
         if not choices_str:
             print_color_string("Invalid Choice...", color = "red")
             continue
@@ -282,7 +288,7 @@ def list_and_run():
 
             choices.append(choice_int)
         else:
-            # look did not break - all chocices are valid
+            # loop did not break - all chocices are valid
             break
 
     # exec each of the choices in turn - exit if one fails
@@ -301,7 +307,6 @@ def list_and_run():
             eval(fn)()
 
 def main():
-
     if not is_ovs_repo(os.getcwd()):
         print_color_string("Not a valid repo", color = 'red')
         return False
