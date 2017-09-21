@@ -262,7 +262,7 @@ def list_and_run():
         choices = []
 
         # Treat cli args as if entered to choice query
-        if not sys.argv:
+        if len(sys.argv) == 1:
             choices_str = raw_input("Enter your (list of) choice(s)[0-%d] : " %i)
         else:
             choices_str = " ".join(sys.argv[1:])
@@ -310,6 +310,9 @@ def main():
     if not is_ovs_repo(os.getcwd()):
         print_color_string("Not a valid repo", color = 'red')
         return False
-    list_and_run()
+    try:
+        list_and_run()
+    except KeyboardInterrupt, ex:
+        print "\nBye!"
 
 main()
