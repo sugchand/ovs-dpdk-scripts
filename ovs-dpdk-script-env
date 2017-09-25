@@ -1,21 +1,17 @@
-# Sample ovs-dpdk-environment file. This file must be present in OVS directory
-# to use this test infra. This file can be created/modified by the environment
-# setting option in the launcher script.
-
-
-PMD_CPU_MASK:-8
+PMD_CPU_MASK:-0x4
 QEMU_DIR:-/home/sugeshch/repo/ovs_dpdk/qemu
-DPDK_PCI2:-0000:07:00.1
+DPDK_PCI2:-0000:05:00.1
+DPDK_VER:-17.05
 VHOST_MAC1:-00:00:00:00:00:01
 DPDK_TARGET:-x86_64-native-linuxapp-gcc
-DPDK_PCI3:-0000:07:00.2
-VM_IMAGE:-/home/sugeshch/repo/test_scripts/ovdk_guest_release.qcow2
-DPDK_PCI1:-0000:07:00.0
-DPDK_DIR:-/home/sugeshch/repo/dpdk_master
+DPDK_PCI3:-
+VM_IMAGE:-/home/sugeshch/repo/test_scripts/ubuntu-17.02.qcow2
+DPDK_PCI1:-0000:05:00.0
+DPDK_DIR:-/home/sugeshch/repo/dpdk_stable
 VHOST_MAC2:-00:00:00:00:00:02
-DPDK_PCI4:-0000:07:00.3
+DPDK_PCI4:-
 OVS_DIR:-/home/sugeshch/repo/ovs_master
-KERNEL_NIC_DRV:-i40e
+KERNEL_NIC_DRV:-ixgbe
 DPDK_NIC1:-dpdk0
 VHOST_NIC2:-dpdkvhostuser1
 VHOST_NIC1:-dpdkvhostuser0
