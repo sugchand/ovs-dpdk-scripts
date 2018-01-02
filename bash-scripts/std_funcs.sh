@@ -30,7 +30,7 @@ set_dpdk_env() {
         DPDK_IGB_UIO=$DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
         DPDK_BIND_TOOL=$DPDK_DIR/tools/dpdk-devbind.py
         ;;
-    17.02|17.05)
+    17.02|17.05|17.11)
         DPDK_IGB_UIO=$DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
         DPDK_BIND_TOOL=$DPDK_DIR/usertools/dpdk-devbind.py
         ;;
