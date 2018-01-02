@@ -6,9 +6,11 @@
 HUGE_DIR=/dev/hugepages
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
 
 
 function start_test {
+    set_dpdk_env
     sudo mkdir -p $HUGE_DIR
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
