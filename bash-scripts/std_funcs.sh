@@ -61,24 +61,13 @@ function std_clean {
 
 #Set environment specific for DPDK version
 set_dpdk_env() {
-    case "$DPDK_VER" in
-    16.04)
-        DPDK_IGB_UIO=$DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-        DPDK_BIND_TOOL=$DPDK_DIR/tools/dpdk_nic_bind.py
-        ;;
-    16.07|16.11)
-        DPDK_IGB_UIO=$DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-        DPDK_BIND_TOOL=$DPDK_DIR/tools/dpdk-devbind.py
-        ;;
-    17.02|17.05|17.11)
-        DPDK_IGB_UIO=$DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-        DPDK_BIND_TOOL=$DPDK_DIR/usertools/dpdk-devbind.py
-        ;;
-    *)
-        echo "DPDK version is not specified, Use default version settings"
-        DPDK_IGB_UIO=$DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-        DPDK_BIND_TOOL=$DPDK_DIR/tools/dpdk-devbind.py
-        ;;
-    esac
+    DPDK_IGB_UIO=$(find $DPDK_DIR -name igb_uio.ko | head -1 )
+    DPDK_BIND_TOOL=$(find $DPDK_DIR -name dpdk-devbind.py | head -1 )
+    if [ -z $DPDK_BIND_TOOL ]; then
+        DPDK_BIND_TOOL=$(find $DPDK_DIR -name dpdk_nic_bind.py | head -1 )
+    fi
+
+    echo "Found igb_uio: " $DPDK_IGB_UIO
+    echo "Found dpdk bind: " $DPDK_BIND_TOOL
 }
 
