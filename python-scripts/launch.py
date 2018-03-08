@@ -45,12 +45,14 @@ BUILD_DPDK_IVSHM : [build_script.sh, build_dpdk_ivshm]
 """
 BASH_SCRIPT_FNS = collections.OrderedDict ([
                    ("CLEAN-TEST-SYSTEM", ["clean_test.sh", "clean"]),
+                   ("PRIPATH-TEST", ["pp.sh", "menu"]),
+                   ("VM-VM-TEST", ["vm2vm_manual.sh", "menu"]),
                    ("PHY-PHY-VANILA-TEST", ["phy2phy_stockovs.sh", "menu"]),
                    ("PHY-PHY-TEST", ["phy2phy_manual.sh", "menu"]),
                    ("PHY-PHY-BOND-TEST", ["phy2phy-bond-bidir.sh", "menu"]),
                    ("PHY-VXLAN-PHY-TEST", ["phy2phy_vxlan-bidir.sh", "menu"]),
                    ("PHY-VXLAN-PHY-noENCAP-TEST", ["phy2phy_vxlan-bidir-no-encap-traffic.sh", "menu"]),
-                   ("PHY-VM-PHY-TEST", ["phy2vm_manual.sh", "menu"]),
+                   ("PHY-CONT-PHY-TEST", ["phy2cont_manual.sh", "menu"]),
                    #Just build with existing config settings
                    ("BUILD-OVS-NO-CLEAN", ["build_script.sh", "build_ovs_default"]),
                    ("BUILD-OVS-GDB-DPDK-NATIVE", ["build_script.sh", "build_ovs_gdb"]),
@@ -164,8 +166,6 @@ def read_and_display_env():
 
     env_fp = open(env_, 'w')
     for key, value in ENV_DICT.iteritems():
-        print_color_string(key + " :- " + value + "\n",
-                           color='green')
         env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
