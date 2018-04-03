@@ -4,14 +4,14 @@
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
 
-SOCK_DIR=/usr/local/var/run/openvswitch
+SOCK_DIR=/tmp
 HUGE_DIR=/dev/hugepages
 MEM=4096M
 
 function start_test {
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
+    sudo $DPDK_DIR/usertools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
 
     sudo mount -t hugetlbfs nodev $HUGE_DIR
     sudo rm $SOCK_DIR/$VHOST_NIC1
@@ -20,7 +20,7 @@ function start_test {
     sudo modprobe uio
     sudo rmmod igb_uio.ko
     sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+    sudo $DPDK_DIR/usertools/dpdk-devbind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
     print_PVP_banner
     sudo rm /usr/local/etc/openvswitch/conf.db
@@ -40,10 +40,14 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 set Bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC1 -- set Interface $VHOST_NIC1 type=dpdkvhostuser
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC2 -- set Interface $VHOST_NIC2 type=dpdkvhostuser
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC1 \
+      -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC2 \
+      -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC1 \
+      -- set Interface $VHOST_NIC1 type=dpdkvhostuserclient options:vhost-server-path="${SOCK_DIR}/${VHOST_NIC1}"
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $VHOST_NIC2 \
+      -- set Interface $VHOST_NIC2 type=dpdkvhostuserclient options:vhost-server-path="${SOCK_DIR}/${VHOST_NIC2}"
     sudo $OVS_DIR/utilities/ovs-ofctl del-flows br0
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=1,action=output:3
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=3,action=output:1 # bidi
@@ -54,9 +58,24 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl show
     echo "Finished setting up the bridge, ports and flows..."
 
-    sleep 5
+    #sleep 5
+    return
     echo "launching the VM"
-    sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on -numa node,memdev=mem -mem-prealloc -smp 2 -drive file=$VM_IMAGE -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1 -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce -device virtio-net-pci,mac=00:00:00:00:00:01,netdev=mynet1,mrg_rxbuf=off -chardev socket,id=char1,path=$SOCK_DIR/$VHOST_NIC2 -netdev type=vhost-user,id=mynet2,chardev=char1,vhostforce -device virtio-net-pci,mac=00:00:00:00:00:02,netdev=mynet2,mrg_rxbuf=off --nographic -snapshot -vnc :5
+    sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 \
+      -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM \
+      -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on \
+      -numa node,memdev=mem -mem-prealloc -smp 2 \
+      -drive file=$VM_IMAGE \
+      \
+      -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1,server \
+      -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce \
+      -device virtio-net-pci,mac=00:00:00:00:00:01,netdev=mynet1,mrg_rxbuf=off \
+      \
+      -chardev socket,id=char1,path=$SOCK_DIR/$VHOST_NIC2,server \
+      -netdev type=vhost-user,id=mynet2,chardev=char1,vhostforce \
+      -device virtio-net-pci,mac=00:00:00:00:00:02,netdev=mynet2,mrg_rxbuf=off \
+      \
+      --nographic -snapshot -vnc :5
 }
 
 function kill_switch {

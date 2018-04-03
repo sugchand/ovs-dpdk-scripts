@@ -166,6 +166,7 @@ def read_and_display_env():
 
     env_fp = open(env_, 'w')
     for key, value in ENV_DICT.iteritems():
+        #print_color_string(key + " :- " + value + "\n", color='green')
         env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()

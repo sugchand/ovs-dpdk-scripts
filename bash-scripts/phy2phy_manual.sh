@@ -14,32 +14,38 @@ function start_test {
     print_phy2phy_banner
     set_dpdk_env
 
-    sudo umount $HUGE_DIR
-    echo "Lets bind the ports to the kernel first"
-    sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
-    mkdir -p $HUGE_DIR
-    sudo mount -t hugetlbfs nodev $HUGE_DIR
+    #sudo umount $HUGE_DIR
+    #echo "Lets bind the ports to the kernel first"
+    #sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
+    #mkdir -p $HUGE_DIR
+    #sudo mount -t hugetlbfs nodev $HUGE_DIR
 
-    sudo modprobe uio
-    sudo rmmod igb_uio.ko
-    sudo insmod $DPDK_IGB_UIO
-    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+    #sudo modprobe uio
+    #sudo rmmod igb_uio.ko
+    #sudo insmod $DPDK_IGB_UIO
+    #sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
     std_start_db
 
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
-    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"
-    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=$DPDK_LCORE_MASK
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem=$DPDK-SOCKET_MEM
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:emc-insert-inv-prob=100          #x => insert 1 per x times, 1 => always. Special 0 => never.
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="-w 0000:07:00.0 -w 0000:07:00.1 --file-prefix=ovs_"
 
     sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
     sleep 22
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set bridge br0 datapath_type=netdev
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC1 -- set Interface $DPDK_NIC1 type=dpdk options:dpdk-devargs=$DPDK_PCI1
-    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC2 -- set Interface $DPDK_NIC2 type=dpdk options:dpdk-devargs=$DPDK_PCI2
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC1 \
+		-- set Interface $DPDK_NIC1 type=dpdk \
+		options:dpdk-devargs=$DPDK_PCI1 options:n_rxq=2
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-port br0 $DPDK_NIC2 \
+		-- set Interface $DPDK_NIC2 type=dpdk \
+		options:dpdk-devargs=$DPDK_PCI2 options:n_rxq=2
 
     sudo $OVS_DIR/utilities/ovs-ofctl del-flows br0
     sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=1,action=output:2
@@ -52,17 +58,10 @@ function start_test {
 }
 
 function kill_switch {
-    echo "Killing the switch.."
-    sudo $OVS_DIR/utilities/ovs-appctl -t ovs-vswitchd exit
-    sudo $OVS_DIR/utilities/ovs-appctl -t ovsdb-server exit
-    sleep 1
-    sudo pkill -9 ovs-vswitchd
-    sudo pkill -9 ovsdb-server
-    sudo umount $HUGE_DIR
-    sudo pkill -9 qemu-system-x86_64*
-    sudo rm -rf /usr/local/var/run/openvswitch/*
-    sudo rm -rf /usr/local/var/log/openvswitch/*
-    sudo pkill -9 pmd*
+    echo "Stopping OvS"
+    std_stop_ovs
+    std_stop_db
+	return
 }
 
 function menu {

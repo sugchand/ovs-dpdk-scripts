@@ -25,8 +25,8 @@ function start_test {
     sudo mount -t hugetlbfs nodev $HUGE_DIR
 
 
-    sudo make -C $OVS_DIR modules_install
-    sudo modprobe openvswitch
+    sudo modprobe gre libcrc32c nf_conntrack nf_conntrack_ipv4 nf_conntrack_ipv6 nf_nat_ipv4 nf_nat_ipv6 nf_defrag_ipv6 nf_defrag_ipv4
+    sudo insmod $OVS_DIR/datapath/linux/openvswitch.ko
     sudo rm /usr/local/etc/openvswitch/conf.db
     sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
     sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --pidfile --detach
