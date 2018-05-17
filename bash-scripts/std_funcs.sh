@@ -6,7 +6,7 @@
 declare DPDK_IGB_UIO
 declare DPDK_BIND_TOOL
 declare DPDK_SOCKET_MEM="1024,1024"
-declare DPDK_LCORE_MASK="0x18"
+declare DPDK_LCORE_MASK="0x4"
 
 # Load the ovs schema and start ovsdb.
 std_start_db() {
@@ -69,8 +69,8 @@ set_dpdk_env() {
         DPDK_BIND_TOOL=$(find $DPDK_DIR -name dpdk_nic_bind.py | head -1 )
     fi
 
-    export DPDK_SOCKET_MEM="1024,1024"
-    export DPDK_LCORE_MASK="0x4"
+    export DPDK_SOCKET_MEM
+    export DPDK_LCORE_MASK
     echo "Found igb_uio: " $DPDK_IGB_UIO
     echo "Found dpdk bind: " $DPDK_BIND_TOOL
 }
