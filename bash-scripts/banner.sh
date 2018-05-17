@@ -206,7 +206,7 @@ vni=1000                 |                                                      
 EOT
 }
 
-print_phy_vxlan_phy_banner() {
+print_phy_tnl_phy_banner() {
 cat <<"EOT"
 
                    ------                                                                ------

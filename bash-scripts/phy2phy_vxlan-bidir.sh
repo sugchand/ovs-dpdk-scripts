@@ -8,7 +8,7 @@ SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 function start_test {
-    print_phy_vxlan_phy_banner
+    print_phy_tnl_phy_banner
     set_dpdk_env
     std_start_db
 

@@ -20,7 +20,7 @@ function start_test {
     sudo modprobe uio
     sudo insmod $DPDK_IGB_UIO
     sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
-    print_phy_vxlan_phy_banner
+    print_phy_tnl_phy_banner
 
     sudo rm /usr/local/etc/openvswitch/conf.db
     sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
