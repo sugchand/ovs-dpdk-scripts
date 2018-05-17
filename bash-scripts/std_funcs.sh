@@ -40,6 +40,12 @@ function std_umount() {
     sudo umount $HUGE_DIR
 }
 
+function std_mount() {
+    std_umount
+    mkdir -p $HUGE_DIR
+    sudo mount -t hugetlbfs nodev $HUGE_DIR
+}
+
 function std_bind_kernel() {
     sudo $DPDK_DIR/tools/dpdk-devbind.py --unbind $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4
     sudo modprobe $KERNEL_NIC_DRV

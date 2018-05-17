@@ -3,6 +3,7 @@
 # Variables #
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SRC_DIR}/banner.sh
+. ${SRC_DIR}/std_funcs.sh
 
 SOCK_DIR=/usr/local/var/run/openvswitch
 HUGE_DIR=/dev/hugepages

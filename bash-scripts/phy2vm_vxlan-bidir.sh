@@ -82,7 +82,7 @@ function start_test {
 #    sudo $OVS_DIR/utilities/ovs-ofctl dump-ports br-phy
     sudo $OVS_DIR/utilities/ovs-vsctl show
     echo "Finished setting up the bridge, ports and flows..."
-                                                                                                                                           sleep 5
+    sleep 5
     echo "launching the VM"
     sudo taskset 0x00000030 sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on -numa node,memdev=mem -mem-prealloc -smp 2 -drive file=$VM_IMAGE -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1 -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce -device virtio-net-pci,mac=01:00:00:00:00:01,netdev=mynet1,mrg_rxbuf=off -chardev socket,id=char1,path=$SOCK_DIR/$VHOST_NIC2 -netdev type=vhost-user,id=mynet2,chardev=char1,vhostforce -device virtio-net-pci,mac=01:00:00:00:00:02,netdev=mynet2,mrg_rxbuf=off --nographic -snapshot -vnc :5
 

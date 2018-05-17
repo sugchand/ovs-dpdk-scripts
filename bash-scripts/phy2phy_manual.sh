@@ -13,6 +13,7 @@ function start_test {
 
     print_phy2phy_banner
     set_dpdk_env
+    set_mount
 
     #sudo umount $HUGE_DIR
     #echo "Lets bind the ports to the kernel first"
