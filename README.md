@@ -69,5 +69,8 @@ However To run the provided bash scripts/command directly, The subshell option
 can be used. The subshell have all the user environment set for executing
 commands.
 
+### pcap-files
+pcap files to use traffic generation in IXIA or trex.
+
 **Please contact me if you are facing any issues while using the test
 infrastructure.**
