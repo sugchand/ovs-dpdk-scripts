@@ -1,7 +1,5 @@
 #!/bin/bash -x
 
-
-
 # Variables #
 HUGE_DIR=/dev/hugepages
 SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -10,28 +8,19 @@ SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 function start_test {
-    set_dpdk_env
-    sudo mkdir -p $HUGE_DIR
-    sudo umount $HUGE_DIR
-    echo "Lets bind the ports to the kernel first"
-    sudo $DPDK_BIND_TOOL --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
-    sudo mount -t hugetlbfs nodev $HUGE_DIR
-
-    sudo modprobe uio
-    sudo insmod $DPDK_IGB_UIO
-    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
     print_phy_vxlan_phy_banner
-
-    sudo rm /usr/local/etc/openvswitch/conf.db
-    sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema
+    set_dpdk_env
+    std_start_db
 
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
-    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="0x4"
-    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="1024,0"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask="$DPDK_LCORE_MASK"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="$DPDK_SOCKET_MEM"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="-w 0000:07:00.0 -w 0000:07:00.1 --file-prefix=ovs_"
+
 
     sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
     sleep 22
@@ -85,19 +74,10 @@ function start_test {
 }
 
 function kill_switch {
-    echo "Killing the switch.."
-    sudo $OVS_DIR/utilities/ovs-appctl -t ovs-vswitchd exit
-    sudo $OVS_DIR/utilities/ovs-appctl -t ovsdb-server exit
-    sleep 1
-    sudo pkill -9 ovs-vswitchd
-    sudo pkill -9 ovsdb-server
-    sudo umount $HUGE_DIR
-    sudo pkill -f qemu-system-x86_64*
-    sudo rm -rf /usr/local/var/run/openvswitch/*
-    sudo rm -rf /usr/local/var/log/openvswitch/*
-    sudo pkill -f pmd*
-    sudo ip link del br-phy
-    sudo ip link del br0
+    echo "Stopping OvS"
+    std_stop_ovs
+    std_stop_db
+	return
 }
 
 function menu {

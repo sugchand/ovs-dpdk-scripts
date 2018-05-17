@@ -3,7 +3,7 @@
 # Directories #
 
 function clean_repo {
-    echo "Cleaning DPDK..."
+    echo "${FUNCNAME[0]} Cleaning DPDK..."
     cd $DPDK_DIR && \
     make uninstall
     cd $OVS_DIR && \
@@ -22,16 +22,16 @@ function clean_repo {
 
 function build_dpdk_gdb {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building DPDK...."
+    echo "${FUNCNAME[0]} Now Building DPDK...."
     cd $DPDK_DIR && \
-    EXTRA_CFLAGS="-g -O0"  make install -j T=$target \
+    EXTRA_CFLAGS="-ggdb -O0"  make install -j T=$target \
     CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
     echo "DPDK build completed...."
 }
 
 function build_dpdk {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building DPDK...."
+    echo "${FUNCNAME[0]} Now Building DPDK...."
     cd $DPDK_DIR && \
     make install -j T=$target \
     CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
@@ -39,7 +39,7 @@ function build_dpdk {
 }
 
 function build_dpdk_ivshm {
-    echo "Now Building DPDK...."
+    echo "${FUNCNAME[0]} Now Building DPDK...."
     target="x86_64-ivshmem-linuxapp-gcc"
     cd $DPDK_DIR && \
     make install -j T=$target CONFIG_RTE_LIBRTE_VHOST=y \
@@ -49,7 +49,7 @@ function build_dpdk_ivshm {
 }
 
 function build_vanila_ovs {
-    echo "Now building Vanila OVS"
+    echo "${FUNCNAME[0]} Now building Vanila OVS"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure --with-linux=/lib/modules/`uname -r`/build
@@ -64,7 +64,7 @@ function build_vanila_ovs {
 }
 
 function build_vanila_ovs_prefix {
-    echo "Now building Vanila OVS with prefix /usr and /var"
+    echo "${FUNCNAME[0]} Now building Vanila OVS with prefix /usr and /var"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc\
@@ -89,7 +89,7 @@ function build_ovs_default {
 
 function build_ovs_and_dpdk_gdb_perf {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building DPDK...."
+    echo "${FUNCNAME[0]} Now Building DPDK...."
     cd $DPDK_DIR && \
     EXTRA_CFLAGS="-g -Ofast"  make install -j T=$target \
     CONFIG_RTE_BUILD_COMBINE_LIBS=y CONFIG_RTE_LIBRTE_VHOST=y DESTDIR=install
@@ -114,7 +114,7 @@ function build_ovs_and_dpdk_gdb_perf {
 
 function build_ovs_gdb {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building OVS using $DPDK_DIR/$target/"
+    echo "${FUNCNAME[0]} Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure CFLAGS="-g3" --with-dpdk=$DPDK_DIR/$target/
@@ -130,7 +130,7 @@ function build_ovs_gdb {
 
 function build_p4_ovs {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building OVS using $DPDK_DIR/$target/"
+    echo "${FUNCNAME[0]} Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure CFLAGS="-g -Ofast"  p4inputfile=/home/sugeshch/repo/ovs_dpdk-2/ovs/include/p4/examples/l2-switch.p4 --with-dpdk=$DPDK_DIR/$target/
@@ -146,7 +146,7 @@ function build_p4_ovs {
 
 function build_ovs {
     target="x86_64-native-linuxapp-gcc"
-    echo "Now Building OVS using $DPDK_DIR/$target/"
+    echo "${FUNCNAME[0]} Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure --with-dpdk=$DPDK_DIR/$target/
@@ -162,7 +162,7 @@ function build_ovs {
 
 function build_ovs_ivshm {
     target="x86_64-ivshmem-linuxapp-gcc"
-    echo "Now Building OVS using $DPDK_DIR/$target/"
+    echo "${FUNCNAME[0]} Now Building OVS using $DPDK_DIR/$target/"
     cd $OVS_DIR && \
     ./boot.sh && \
     ./configure --with-dpdk=$DPDK_DIR/$target/
@@ -178,7 +178,7 @@ function build_ovs_ivshm {
 
 function build_qemu {
     #Build Qemu, please build with 2.2 qemu version as it has userspace vhost
-    echo "Now Building QEMU...."
+    echo "${FUNCNAME[0]} Now Building QEMU...."
     cd $QEMU_DIR && \
     ./configure --target-list=x86_64-softmmu --enable-kvm
     if [ $? -ne 0 ]; then
