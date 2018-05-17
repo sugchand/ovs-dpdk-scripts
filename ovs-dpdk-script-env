@@ -1,7 +1,6 @@
 PMD_CPU_MASK:-0x4
 QEMU_DIR:-/home/sugeshch/repo/ovs_dpdk/qemu
 DPDK_PCI2:-0000:05:00.1
-DPDK_VER:-17.05
 VHOST_MAC1:-00:00:00:00:00:01
 DPDK_TARGET:-x86_64-native-linuxapp-gcc
 DPDK_PCI3:-

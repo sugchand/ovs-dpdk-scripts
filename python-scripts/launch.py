@@ -33,7 +33,6 @@ ENV_DICT = {
             "KERNEL_NIC_DRV" : "",
             "DPDK_TARGET" : "",
             "PMD_CPU_MASK" : "",
-            "DPDK_VER" : ""
             }
 ENV_FILE_NAME = ".ovs-dpdk-script-env"
 
