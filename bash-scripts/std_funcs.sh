@@ -70,7 +70,7 @@ set_dpdk_env() {
     fi
 
     export DPDK_SOCKET_MEM="1024,1024"
-    export DPDK_LCORE_MASK="0x18"
+    export DPDK_LCORE_MASK="0x4"
     echo "Found igb_uio: " $DPDK_IGB_UIO
     echo "Found dpdk bind: " $DPDK_BIND_TOOL
 }

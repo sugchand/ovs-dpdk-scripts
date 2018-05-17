@@ -50,6 +50,7 @@ BASH_SCRIPT_FNS = collections.OrderedDict ([
                    ("PHY-PHY-TEST", ["phy2phy_manual.sh", "menu"]),
                    ("PHY-PHY-BOND-TEST", ["phy2phy-bond-bidir.sh", "menu"]),
                    ("PHY-VXLAN-PHY-TEST", ["phy2phy_vxlan-bidir.sh", "menu"]),
+                   ("PHY-NVGRE-PHY-TEST", ["phy2phy_nvgre-bidir.sh", "menu"]),
                    ("PHY-VXLAN-PHY-noENCAP-TEST", ["phy2phy_vxlan-bidir-no-encap-traffic.sh", "menu"]),
                    ("PHY-CONT-PHY-TEST", ["phy2cont_manual.sh", "menu"]),
                    #Just build with existing config settings
