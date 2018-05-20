@@ -79,5 +79,6 @@ set_dpdk_env() {
     export DPDK_LCORE_MASK
     echo "Found igb_uio: " $DPDK_IGB_UIO
     echo "Found dpdk bind: " $DPDK_BIND_TOOL
+    $DPDK_BIND_TOOL --status-dev net
 }
 
