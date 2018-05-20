@@ -16,8 +16,9 @@ function start_test {
     sudo mount -t hugetlbfs nodev $HUGE_DIR
 
     sudo modprobe uio
-    sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+    sudo rmmod igb_uio.ko
+    sudo insmod $DPDK_IGB_UIO
+    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
     sudo rm /usr/local/etc/openvswitch/conf.db
     sudo $OVS_DIR/ovsdb/ovsdb-tool create /usr/local/etc/openvswitch/conf.db $OVS_DIR/vswitchd/vswitch.ovsschema

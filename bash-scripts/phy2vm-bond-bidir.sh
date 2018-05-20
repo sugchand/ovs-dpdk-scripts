@@ -21,8 +21,9 @@ function start_test {
 
     sudo modprobe uio
     sudo rmmod igb_uio.ko
-    sudo insmod $DPDK_DIR/$DPDK_TARGET/kmod/igb_uio.ko
-    sudo $DPDK_DIR/tools/dpdk-devbind.py --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4
+    sudo insmod $DPDK_IGB_UIO
+    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2 $DPDK_PCI3 $DPDK_PCI4
+
     echo "dpdk0 - $DPDK_PCI1"
     echo "dpdk1 - $DPDK_PCI2"
     echo "dpdk2 - $DPDK_PCI3"

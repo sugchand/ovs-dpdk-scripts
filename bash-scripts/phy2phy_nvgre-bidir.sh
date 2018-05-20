@@ -12,6 +12,12 @@ function start_test {
     set_dpdk_env
     std_start_db
 
+
+    sudo modprobe uio
+    sudo rmmod igb_uio.ko
+    sudo insmod $DPDK_IGB_UIO
+    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/ovsdb/ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true

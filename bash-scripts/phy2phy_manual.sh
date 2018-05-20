@@ -21,10 +21,10 @@ function start_test {
     #mkdir -p $HUGE_DIR
     #sudo mount -t hugetlbfs nodev $HUGE_DIR
 
-    #sudo modprobe uio
-    #sudo rmmod igb_uio.ko
-    #sudo insmod $DPDK_IGB_UIO
-    #sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
+    sudo modprobe uio
+    sudo rmmod igb_uio.ko
+    sudo insmod $DPDK_IGB_UIO
+    sudo $DPDK_BIND_TOOL --bind=igb_uio $DPDK_PCI1 $DPDK_PCI2
 
     std_start_db
 
