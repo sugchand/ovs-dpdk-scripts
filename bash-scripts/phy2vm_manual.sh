@@ -7,13 +7,16 @@ SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SOCK_DIR=/tmp
 HUGE_DIR=/dev/hugepages
 MEM=4096M
+TMUX_VM_SESSION="pvp-vm"
+SSH_PORT=10022
 
 function start_test {
     sudo umount $HUGE_DIR
     echo "Lets bind the ports to the kernel first"
     sudo $DPDK_DIR/usertools/dpdk-devbind.py --bind=$KERNEL_NIC_DRV $DPDK_PCI1 $DPDK_PCI2
 
-    sudo mount -t hugetlbfs nodev $HUGE_DIR
+    set_dpdk_env
+    std_mount
     sudo rm $SOCK_DIR/$VHOST_NIC1
     sudo rm $SOCK_DIR/$VHOST_NIC2
 
@@ -58,24 +61,36 @@ function start_test {
     sudo $OVS_DIR/utilities/ovs-vsctl show
     echo "Finished setting up the bridge, ports and flows..."
 
+    command -v tmux
+    if [ $? -ne 0 ]; then
+        echo "*** ERROR : Cannot start VM, tmux binary is missing ***"
+        return
+    fi
+    tmux kill-session -t $TMUX_VM_SESSION
+    echo "***  Setting up the VM in a TMUX session, ***"
+
+
     #sleep 5
-    return
     echo "launching the VM"
-    sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 \
+    tmux new -d -s $TMUX_VM_SESSION "sudo -E $QEMU_DIR/x86_64-softmmu/qemu-system-x86_64 \
       -name us-vhost-vm1 -cpu host -enable-kvm -m $MEM \
       -object memory-backend-file,id=mem,size=$MEM,mem-path=$HUGE_DIR,share=on \
-      -numa node,memdev=mem -mem-prealloc -smp 2 \
+      -cpu host \
+      -numa node,memdev=mem -mem-prealloc -smp cores=4,threads=1,sockets=1 \
       -drive file=$VM_IMAGE \
-      \
+      -netdev user,id=nttsip,hostfwd=tcp::${SSH_PORT}-:22 \
+      -device e1000,netdev=nttsip \
       -chardev socket,id=char0,path=$SOCK_DIR/$VHOST_NIC1,server \
       -netdev type=vhost-user,id=mynet1,chardev=char0,vhostforce \
       -device virtio-net-pci,mac=00:00:00:00:00:01,netdev=mynet1,mrg_rxbuf=off \
-      \
       -chardev socket,id=char1,path=$SOCK_DIR/$VHOST_NIC2,server \
       -netdev type=vhost-user,id=mynet2,chardev=char1,vhostforce \
       -device virtio-net-pci,mac=00:00:00:00:00:02,netdev=mynet2,mrg_rxbuf=off \
-      \
-      --nographic -snapshot -vnc :5
+      --nographic" #-snapshot -vnc :5"
+
+    echo " *** VM is running on tmux-session $TMUX_VM_SESSION ***"
+    echo " *** Log into the VM at 'tmux a -t $TMUX_VM_SESSION' ***"
+
 }
 
 function kill_switch {
