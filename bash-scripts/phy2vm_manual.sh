@@ -86,7 +86,7 @@ function start_test {
       -chardev socket,id=char1,path=$SOCK_DIR/$VHOST_NIC2,server \
       -netdev type=vhost-user,id=mynet2,chardev=char1,vhostforce \
       -device virtio-net-pci,mac=00:00:00:00:00:02,netdev=mynet2,mrg_rxbuf=off \
-      --nographic" #-snapshot -vnc :5"
+      --nographic -snapshot -vnc :5"
 
     echo " *** VM is running on tmux-session $TMUX_VM_SESSION ***"
     echo " *** Log into the VM at 'tmux a -t $TMUX_VM_SESSION' ***"
