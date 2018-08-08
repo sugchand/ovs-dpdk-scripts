@@ -5,7 +5,7 @@
 
 declare DPDK_IGB_UIO
 declare DPDK_BIND_TOOL
-declare DPDK_SOCKET_MEM="1024,1024"
+declare DPDK_SOCKET_MEM="4096,4096"
 declare DPDK_LCORE_MASK="0x4"
 
 # Load the ovs schema and start ovsdb.
@@ -31,6 +31,7 @@ function std_stop_ovs() {
     sleep 1
     sudo rm -rf /usr/local/var/log/openvswitch/*
     sudo rm -rf /usr/local/var/run/openvswitch/*
+    sudo rm -rf /usr/local/etc/openvswitch/*
     sudo pkill -9 ovs-vsctl
     sudo pkill -9 pmd*
     sudo pkill -9 ovs-vswitchd
