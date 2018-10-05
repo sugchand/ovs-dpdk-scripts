@@ -19,6 +19,7 @@ for nic in ${NICS[@]}; do STD_WHITELIST="$STD_WHITELIST -w $nic"; done
 declare DPDK_SOCKET_MEM="1024,1024"
 declare DPDK_LCORE_MASK="0x1"
 declare VHU_SOCK_DIR=/tmp
+declare HUGE_DIR=/dev/hugepages
 
 # Load the ovs schema and start ovsdb.
 std_start_db() {
@@ -36,6 +37,23 @@ function std_stop_db() {
     sudo $OVS_DIR/utilities/ovs-appctl --timeout=3 -t ovsdb-server exit
     sleep 1
     sudo pkill -9 ovsdb-server
+}
+
+function std_start_ovs() {
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=$DPDK_LCORE_MASK
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem=$DPDK_SOCKET_MEM
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-hugepage-dir="$HUGE_DIR"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask="$PMD_CPU_MASK"
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:emc-insert-inv-prob=100          #x => insert 1 per x times, 1 => always. Special 0 => never.
+    sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="$STD_WHITELIST --file-prefix=ovs_"
+
+    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
+    sleep 22
+
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
+    sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set bridge br0 datapath_type=netdev
 }
 
 function std_stop_ovs() {
