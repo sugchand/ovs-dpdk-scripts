@@ -19,7 +19,7 @@ ENV_DICT = collections.OrderedDict ([
     ("DPDK_DIR", ""),
     ("DPDK_NIC1", ""),
     ("DPDK_NIC2", ""),
-    ("DPDK_NICS", ""),
+    ("DPDK_PCIS", ""),
     ("DPDK_PCI1", ""),
     ("DPDK_PCI2", ""),
     ("DPDK_PCI3", ""),

@@ -8,10 +8,10 @@ declare DPDK_IGB_UIO
 declare DPDK_BIND_TOOL
 declare -A STD_IFACE_TO_PORT # map "iface_name" -> openflow port no
 
-# Create STD_WHITELIST and STD_NICS from comma/space separated string DPDK_NICS
-declare -a STD_NICS         #STD_NICS is an array
-IFS=', ' read -r -a STD_NICS <<< "$DPDK_NICS"
-NUM_DPDK_IFACES=${#STD_NICS[@]}
+# Create STD_WHITELIST and STD_PCIS from comma/space separated string DPDK_PCIS
+declare -a STD_PCIS         #STD_PCIS is an array
+IFS=', ' read -r -a STD_PCIS <<< "$DPDK_PCIS"
+NUM_DPDK_IFACES=${#STD_PCIS[@]}
 STD_WHITELIST=""                 # -w NIC1 -w NIC2 ...
 for nic in ${NICS[@]}; do STD_WHITELIST="$STD_WHITELIST -w $nic"; done
 
@@ -113,7 +113,7 @@ function std_clean {
 
 
 
-# creates a dpdk interface for each pci device in STD_NICS array and a number of
+# creates a dpdk interface for each pci device in STD_PCIS array and a number of
 # vhuclient ifaces based on $1 arg.
 #
 # $1 the number of vhostuserclient ifaces to create
@@ -133,7 +133,7 @@ function std_create_ifaces() {
         IFACE_NAME="${DPDK_IFACE_NAME_BASE}${idx}"
         sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10  add-port br0 $IFACE_NAME \
 		    -- set Interface $IFACE_NAME type=dpdk \
-            options:dpdk-devargs=${STD_NICS[$idx]}     \
+            options:dpdk-devargs=${STD_PCIS[$idx]}     \
             options:n_rxq=1                        \
 			ofport_request=$port_no
         STD_IFACE_TO_PORT[$IFACE_NAME]=$port_no
