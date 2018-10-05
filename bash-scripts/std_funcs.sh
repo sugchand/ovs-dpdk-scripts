@@ -8,6 +8,13 @@ declare DPDK_IGB_UIO
 declare DPDK_BIND_TOOL
 declare -A STD_IFACE_TO_PORT # map "iface_name" -> openflow port no
 
+# Create STD_WHITELIST and STD_NICS from comma/space separated string DPDK_NICS
+declare -a STD_NICS         #STD_NICS is an array
+IFS=', ' read -r -a STD_NICS <<< "$DPDK_NICS"
+NUM_DPDK_IFACES=${#STD_NICS[@]}
+STD_WHITELIST=""                 # -w NIC1 -w NIC2 ...
+for nic in ${NICS[@]}; do STD_WHITELIST="$STD_WHITELIST -w $nic"; done
+
 # Some settings that don't change often enough to warrant being in the env file
 declare DPDK_SOCKET_MEM="1024,1024"
 declare DPDK_LCORE_MASK="0x1"
@@ -83,9 +90,6 @@ function std_clean {
 function std_create_ifaces() {
     VHOST_IFACE_NAME_BASE=vhu_
     DPDK_IFACE_NAME_BASE=dpdk_
-    # Turn comma/space separated string into array
-    IFS=', ' read -r -a STD_NICS <<< "$DPDK_NICS"
-    NUM_DPDK_IFACES=${#STD_NICS[@]}
     port_no=1
     #declare -A STD_IFACE_TO_PORT # map "iface_name" -> openflow port no
 
