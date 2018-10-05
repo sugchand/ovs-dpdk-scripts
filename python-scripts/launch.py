@@ -47,6 +47,7 @@ BASH_SCRIPT_FNS = collections.OrderedDict ([
                    ("CLEAN-TEST-SYSTEM", ["clean_test.sh", "clean"]),
                    #("PRIPATH-TEST", ["pp.sh", "menu"]),
                    ("VM-VM-TEST", ["vm2vm_manual.sh", "menu"]),
+                   ("MULTICAST", ["multicast.sh", "menu"]),
                    ("PHY-PHY-VANILA-TEST", ["phy2phy_stockovs.sh", "menu"]),
                    ("PHY-PHY-TEST", ["phy2phy_manual.sh", "menu"]),
                    #("PVP-2PHY-2VHOST-TEST", ["phy2vm_manual.sh", "menu"]),
