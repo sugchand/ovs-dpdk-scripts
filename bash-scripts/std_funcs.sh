@@ -54,7 +54,7 @@ function std_bind_kernel() {
 }
 
 function std_stop_vms() {
-    sudo pkill -9 qemu-system-x86_64*
+    sudo pkill qemu
 }
 
 function std_clean {

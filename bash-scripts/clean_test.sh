@@ -12,6 +12,7 @@ function clean {
     #std_clean
     std_stop_ovs
     std_stop_db
+    std_stop_vms
 
     echo "System cleaned for next test run"
 }
