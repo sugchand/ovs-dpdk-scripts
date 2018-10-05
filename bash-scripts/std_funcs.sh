@@ -34,7 +34,7 @@ std_start_db() {
 }
 
 function std_stop_db() {
-    sudo $OVS_DIR/utilities/ovs-appctl --timeout=3 -t ovsdb-server exit
+    sudo $OVS_DIR/utilities/ovs-appctl --timeout=3 -t ovsdb-server exit 2> /dev/null
     sleep 1
     sudo pkill -9 ovsdb-server
 }
@@ -74,7 +74,7 @@ function std_start_ovs() {
 }
 
 function std_stop_ovs() {
-    sudo $OVS_DIR/utilities/ovs-appctl --timeout=3 -t ovs-vswitchd exit
+    sudo $OVS_DIR/utilities/ovs-appctl --timeout=3 -t ovs-vswitchd exit 2> /dev/null
     sleep 1
     sudo rm -rf /usr/local/var/log/openvswitch/*
     sudo rm -rf /usr/local/var/run/openvswitch/*
