@@ -40,6 +40,7 @@ function std_stop_db() {
 }
 
 function std_start_ovs() {
+    echo "Writing OvS config to ovsdb.."
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait init
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=$DPDK_LCORE_MASK
@@ -49,11 +50,27 @@ function std_start_ovs() {
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:emc-insert-inv-prob=100          #x => insert 1 per x times, 1 => always. Special 0 => never.
     sudo $OVS_DIR/utilities/ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="$STD_WHITELIST --file-prefix=ovs_"
 
-    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file &
-    sleep 22
+    #Extract version from ovs-vswitchd -V
+    IFS=" " read -r -a FIELDS <<< $(sudo -E $OVS_DIR/vswitchd/ovs-vswitchd -V | head -1)
+    ovs_ver=${FIELDS[-1]}
+
+    echo "Starting OvS.."
+    sudo -E $OVS_DIR/vswitchd/ovs-vswitchd --pidfile unix:/usr/local/var/run/openvswitch/db.sock --log-file -vconsole:err -vsyslog:info -vfile:dbg &
+
+    echo "Waiting for 'up' line in ovs-vswitchd.log..."
+    case $ovs_ver in
+    *2\.10*)
+        sleep 1
+        ( sudo tail -f -n0 /usr/local/var/log/openvswitch/ovs-vswitchd.log & ) | grep -q "bridge.INFO.ovs-vswitchd.*Open vSwitch"
+    ;;
+    *)
+        ( sudo tail -f -n0 /usr/local/var/log/openvswitch/ovs-vswitchd.log & ) | grep -q "memory.*INFO.*handlers.*ports.*revalidator"
+    ;;
+    esac
 
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 del-br br0
     sudo $OVS_DIR/utilities/ovs-vsctl --timeout 10 add-br br0 -- set bridge br0 datapath_type=netdev
+    echo "OvS is up."
 }
 
 function std_stop_ovs() {
