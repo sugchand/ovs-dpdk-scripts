@@ -146,17 +146,25 @@ def read_and_display_env():
         return False
 
     env_fp = open(env_, 'r')
+    line_no = -1
     for line in env_fp.readlines():
+        line_no += 1
         if not line:
             continue
         if line.strip().find("export") > 0:
             # Line does not begin with 'export'
             continue
-        (tmp, value) = line.split('=')
-        (export, key) = tmp.split(' ')
+        # env line fmt is - 'export var="a b c"' quotes optional but required
+        # for vars with spaces. Note lack of any other shell interpolation.
+        (lhs, value) = line.split('=')
+        (export, key) = lhs.split(' ')
+        value = value.rstrip()
+        if value and value[0] == '"' and value[-1] == '"':
+            value = value[1:-1]
 
-        if not (key and value):
-            print_color_string("Something went wrong in file, its corrupted",
+        if not key:
+            print_color_string("Could not parse %s line %d '%s'" \
+                               % (env_, line_no, line),
                                color = 'red')
             continue
 
@@ -172,6 +180,8 @@ def read_and_display_env():
     env_fp = open(env_, 'w')
     for key, value in ENV_DICT.iteritems():
         #print_color_string(key + " :- " + value + "\n", color='green')
+        if value.find(" ") >= 0:
+            value = '"%s"' % value
         env_fp.write("export %s=%s\n" % (str(key), str(value)))
 
     env_fp.close()
@@ -204,8 +214,9 @@ def set_and_save_selected_env():
         if key == key_in:
             data = raw_input("Enter new value to update %s: " %key_in)
             value = data.strip()
+        if value.find(" ") >= 0:
+            value = '"%s"' % value
         env_fp.write("export %s=%s\n" % (str(key), str(value)))
-        #env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
     read_and_display_env()
@@ -225,8 +236,9 @@ def set_and_save_env():
         data = raw_input(key + "=" + value + ": ")
         if data:
             value = data.strip()
+        if value.find(" ") >= 0:
+            value = '"%s"' % value
         env_fp.write("export %s=%s\n" % (str(key), str(value)))
-        #env_fp.write(str(key) + ":-" + str(value) + "\n")
 
     env_fp.close()
 
