@@ -23,6 +23,7 @@ function start_test {
     #sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=${STD_IFACE_TO_PORT[dpdk_1]},action=output:${STD_IFACE_TO_PORT[dpdk_0]}
     #sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=${STD_IFACE_TO_PORT[dpdk_0]},action=in_port
     #sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 idle_timeout=0,in_port=${STD_IFACE_TO_PORT[dpdk_1]},action=in_port
+    sudo $OVS_DIR/utilities/ovs-ofctl add-flow br0 action=NORMAL
     sudo $OVS_DIR/utilities/ovs-ofctl dump-flows br0
     set +e
 
