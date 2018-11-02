@@ -15,25 +15,26 @@ except ImportError:
         return string_
 
 # Holds all the environment settings that needed for OVS-DPDK scripts
-ENV_DICT = {
-            "OVS_DIR" : "",
-            "DPDK_DIR" : "",
-            "QEMU_DIR" : "",
-            "VM_IMAGE" : "",
-            "DPDK_NIC1" : "",
-            "DPDK_NIC2" : "",
-            "DPDK_PCI1" : "",
-            "DPDK_PCI2" : "",
-            "DPDK_PCI3" : "",
-            "DPDK_PCI4" : "",
-            "VHOST_NIC1" : "",
-            "VHOST_NIC2" : "",
-            "VHOST_MAC1" : "",
-            "VHOST_MAC2" : "",
-            "KERNEL_NIC_DRV" : "",
-            "DPDK_TARGET" : "",
-            "PMD_CPU_MASK" : "",
-            }
+ENV_DICT = collections.OrderedDict ([
+    ("DPDK_DIR", ""),
+    ("DPDK_NIC1", ""),
+    ("DPDK_NIC2", ""),
+    ("DPDK_PCIS", ""),
+    ("DPDK_PCI1", ""),
+    ("DPDK_PCI2", ""),
+    ("DPDK_PCI3", ""),
+    ("DPDK_PCI4", ""),
+    ("DPDK_TARGET", ""),
+    ("DPDK_VER", ""),
+    ("KERNEL_NIC_DRV", ""),
+    ("OVS_DIR", ""),
+    ("PMD_CPU_MASK", ""),
+    ("QEMU_DIR", ""),
+    ("VHOST_MAC1", ""),
+    ("VHOST_MAC2", ""),
+    ("VHOST_NIC1", ""),
+    ("VHOST_NIC2", ""),
+    ("VM_IMAGE", "")])
 ENV_FILE_NAME = ".ovs-dpdk-script-env"
 
 """
@@ -46,6 +47,7 @@ BASH_SCRIPT_FNS = collections.OrderedDict ([
                    ("CLEAN-TEST-SYSTEM", ["clean_test.sh", "clean"]),
                    #("PRIPATH-TEST", ["pp.sh", "menu"]),
                    ("VM-VM-TEST", ["vm2vm_manual.sh", "menu"]),
+                   ("MULTICAST", ["multicast.sh", "menu"]),
                    ("PHY-PHY-VANILA-TEST", ["phy2phy_stockovs.sh", "menu"]),
                    ("PHY-PHY-TEST", ["phy2phy_manual.sh", "menu"]),
                    #("PVP-2PHY-2VHOST-TEST", ["phy2vm_manual.sh", "menu"]),
@@ -144,24 +146,32 @@ def read_and_display_env():
         return False
 
     env_fp = open(env_, 'r')
+    line_no = -1
     for line in env_fp.readlines():
+        line_no += 1
         if not line:
             continue
-        if line.startswith("#"):
-                # Comment line , do nothing.
-	    continue
-	if ":-" not in line:
+        if line.strip().find("export") > 0:
+            # Line does not begin with 'export'
             continue
-        (key, value) = line.split(':-')
+        # env line fmt is - 'export var="a b c"' quotes optional but required
+        # for vars with spaces. Note lack of any other shell interpolation.
+        (lhs, value) = line.split('=')
+        (export, key) = lhs.split(' ')
+        value = value.rstrip()
+        if value and value[0] == '"' and value[-1] == '"':
+            value = value[1:-1]
 
-        if not (key and value):
-            print_color_string("Something went wrong in file, its corrupted",
+        if not key:
+            print_color_string("Could not parse %s line %d '%s'" \
+                               % (env_, line_no, line),
                                color = 'red')
             continue
 
         if not key in ENV_DICT:
             print_color_string("Invalid key in the file, corrupted file",
                                color = 'red')
+            print("%s=%s\n" % (str(key), str(value)))
             continue
 
         ENV_DICT[key] = value.strip('\n')
@@ -170,7 +180,9 @@ def read_and_display_env():
     env_fp = open(env_, 'w')
     for key, value in ENV_DICT.iteritems():
         #print_color_string(key + " :- " + value + "\n", color='green')
-        env_fp.write(str(key) + ":-" + str(value) + "\n")
+        if value.find(" ") >= 0:
+            value = '"%s"' % value
+        env_fp.write("export %s=%s\n" % (str(key), str(value)))
 
     env_fp.close()
     return True
@@ -202,7 +214,9 @@ def set_and_save_selected_env():
         if key == key_in:
             data = raw_input("Enter new value to update %s: " %key_in)
             value = data.strip()
-        env_fp.write(str(key) + ":-" + str(value) + "\n")
+        if value.find(" ") >= 0:
+            value = '"%s"' % value
+        env_fp.write("export %s=%s\n" % (str(key), str(value)))
 
     env_fp.close()
     read_and_display_env()
@@ -222,7 +236,9 @@ def set_and_save_env():
         data = raw_input(key + "=" + value + ": ")
         if data:
             value = data.strip()
-        env_fp.write(str(key) + ":-" + str(value) + "\n")
+        if value.find(" ") >= 0:
+            value = '"%s"' % value
+        env_fp.write("export %s=%s\n" % (str(key), str(value)))
 
     env_fp.close()
 
